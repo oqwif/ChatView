@@ -22,17 +22,17 @@ public struct ChatTheme {
     public var animatedEllipsisSize: CGFloat
 
     public init(
-        userMessageBackgroundColor: Color = Color(UIColor.systemGray4),
-        characterMessageBackgroundColor: Color = Color(UIColor.systemGray6),
+        userMessageBackgroundColor: Color = Color.gray.opacity(0.2),
+        characterMessageBackgroundColor: Color = Color.gray.opacity(0.1),
         userMessageFont: Font = .system(size: 14, weight: .medium),
         characterMessageFont: Font = .system(size: 14, weight: .medium),
-        userMessageTextColor: Color = Color(UIColor.label),
-        characterMessageTextColor: Color = Color(UIColor.label),
+        userMessageTextColor: Color = Color.primary,
+        characterMessageTextColor: Color = Color.primary,
         errorMessageFont: Font = .system(size: 14, weight: .medium),
         retryButtonFont: Font = .system(size: 12, weight: .medium),
-        retryButtonBackgroundColor: Color = Color(UIColor.systemGray),
-        retryButtonTextColor: Color = Color(UIColor.white),
-        animatedEllipsisColor: Color = Color(UIColor.systemGray2),
+        retryButtonBackgroundColor: Color = Color.gray,
+        retryButtonTextColor: Color = Color.white,
+        animatedEllipsisColor: Color = Color.secondary,
         animatedEllipsisSize: CGFloat = 6.0
     ) {
         self.userMessageBackgroundColor = userMessageBackgroundColor
