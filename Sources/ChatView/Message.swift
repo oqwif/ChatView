@@ -6,8 +6,8 @@
 
 import Foundation
 
-struct Message: Identifiable, Equatable {
-    var id = UUID()
+public struct Message: Identifiable, Equatable {
+    public var id = UUID()
     var text: String
     var isUser: Bool  // true for user's messages, false for other's messages
     var isReceiving: Bool = false

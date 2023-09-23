@@ -10,7 +10,7 @@ public struct ChatView: View {
     @StateObject private var viewModel: ChatViewModel
     @State private var showErrorAlert = false
     
-    init(systemPrompt: String, token: String, userID: String? = nil) {
+    public init(systemPrompt: String, token: String, userID: String? = nil) {
         _viewModel = StateObject(wrappedValue: ChatViewModel(
             systemPrompt: systemPrompt,
             token: token,

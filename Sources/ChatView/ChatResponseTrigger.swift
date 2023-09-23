@@ -6,7 +6,7 @@
 
 import Foundation
 
-protocol ChatResponseTrigger {
+public protocol ChatResponseTrigger {
     func shouldActivate(forChatResponse response: String) -> Bool
     func activate()
 }
