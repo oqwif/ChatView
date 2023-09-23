@@ -6,7 +6,7 @@
 
 import SwiftUI
 
-struct ChatView: View {
+public struct ChatView: View {
     @StateObject private var viewModel: ChatViewModel
     @State private var showErrorAlert = false
     
@@ -18,7 +18,7 @@ struct ChatView: View {
             triggers: nil))
     }
     
-    var body: some View {
+    public var body: some View {
         ZStack {
             VStack {
                 chatList
