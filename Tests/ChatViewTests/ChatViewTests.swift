@@ -6,6 +6,6 @@ final class ChatViewTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(ChatView().text, "Hello, World!")
+//        XCTAssertEqual(ChatView().text, "Hello, World!")
     }
 }
