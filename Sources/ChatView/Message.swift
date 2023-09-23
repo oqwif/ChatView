@@ -31,7 +31,9 @@ extension Message {
             Message(text: "Hi there! I'm good, thanks for asking. How about you?", isUser: true),
             Message(text: "I'm doing well! Have you seen the new movie that just came out?", isUser: false),
             Message(text: "Not yet, but I've heard great reviews about it.", isUser: true),
-            Message(text: "You should definitely check it out. It's worth it!", isUser: false)
+            Message(text: "You should definitely check it out. It's worth it!", isUser: false),
+            Message(text: "", isUser: false, isReceiving: true),
+            Message(text: "", isUser: false, isError: true)
         ]
     }
 }

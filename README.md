@@ -12,6 +12,7 @@ ChatView is a Swift package for easily integrating chat functionality into your 
 - Automatic message scrolling.
 - Error handling with retry mechanism.
 - Optional triggers for specific chat responses.
+- Customizable UI with `ChatTheme`.
 
 ## Installation
 
@@ -43,6 +44,15 @@ You can initialize a `ChatView` instance like this:
 ChatView(systemPrompt: "Your system prompt here", token: "Your OpenAI token", userID: "Optional user ID")
 ```
 
+Or with a custom `ChatTheme`:
+
+```swift
+let theme = ChatTheme(
+    // ... initialize your theme properties here
+)
+ChatView(systemPrompt: "Your system prompt here", token: "Your OpenAI token", userID: "Optional user ID", theme: theme)
+```
+
 ### Implementing Triggers
 
 To implement triggers, you can define a class that conforms to `ChatResponseTrigger`. For example:
@@ -70,12 +80,26 @@ let viewModel = ChatViewModel(systemPrompt: "Your system prompt", token: "Your O
 
 You can easily customize the chat UI and experience to fit your needs. The package is built in a modular way to allow easy modifications.
 
+### ChatTheme
+
+`ChatTheme` allows you to customize the appearance of the chat interface. You can specify different styles for user and system messages, error messages, and other UI elements. A default theme is provided and can be overridden by creating your own instance of `ChatTheme`.
+
+```swift
+let customTheme = ChatTheme(
+    userMessageBackgroundColor: .blue,
+    characterMessageBackgroundColor: .purple,
+    // ... other customization
+)
+
+ChatView(systemPrompt: "Your system prompt here", token: "Your OpenAI token", userID: "Optional user ID", theme: customTheme)
+```
+
 ## Requirements
 
 - iOS 14.0+
 - Xcode 12.0+
 - Swift 5.3+
-  
+
 ## Contributing
 
 If you find a bug or would like to suggest a new feature, feel free to open an issue or submit a pull request.
@@ -87,3 +111,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ---
 
 Made with ❤️ by Jim Conroy. Feel free to reach out with any questions!
+

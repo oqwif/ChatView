@@ -8,9 +8,12 @@ import SwiftUI
 
 public struct ChatView: View {
     @StateObject private var viewModel: ChatViewModel
+    public let theme: ChatTheme
+    
     @State private var showErrorAlert = false
     
-    public init(systemPrompt: String, token: String, userID: String? = nil) {
+    public init(systemPrompt: String, token: String, userID: String? = nil, theme: ChatTheme? = nil) {
+        self.theme = theme ?? ChatTheme()
         _viewModel = StateObject(wrappedValue: ChatViewModel(
             systemPrompt: systemPrompt,
             token: token,
@@ -40,7 +43,7 @@ public struct ChatView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 ForEach(viewModel.messages) { message in
-                    MessageView(message: message, retryAction: viewModel.retry)
+                    MessageView(message: message, theme: theme, retryAction: viewModel.retry)
                         .id(message.id)
                 }
             }
