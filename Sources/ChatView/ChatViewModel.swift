@@ -58,7 +58,7 @@ public class ChatViewModel: ObservableObject {
     
     private func performChatGPTCall() {
         updateOnMain {
-            self.messages.append(Message(text: "", role: .user, isReceiving: true))
+            self.messages.append(Message(text: "", role: .assistant, isReceiving: true))
         }
         Task {
             do {
