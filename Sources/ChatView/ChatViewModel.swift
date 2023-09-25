@@ -21,7 +21,7 @@ public class ChatViewModel: ObservableObject {
     
     private let chatProvider: any ChatProvider
     
-    init(systemPrompt: String,
+    public init(systemPrompt: String,
          chatProvider: any ChatProvider,
          triggers: [ChatResponseTrigger]? = nil,
          messages: [Message] = []) {

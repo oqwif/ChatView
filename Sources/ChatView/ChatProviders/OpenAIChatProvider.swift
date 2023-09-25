@@ -8,7 +8,7 @@
 import Foundation
 import OpenAI
 
-struct OpenAIChatProvider: ChatProvider {
+public struct OpenAIChatProvider: ChatProvider {
     let openAI: OpenAI
     let temperature: OpenAIChatTemperature
     let model: String       // e.g. "gpt-3.5-turbo"
