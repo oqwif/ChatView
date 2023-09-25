@@ -32,14 +32,14 @@ struct MessageView: View {
             }
         } else {
             Text(message.text)
-                .font(message.isUser ? theme.userMessageFont : theme.characterMessageFont)
-                .foregroundColor(message.isUser ? theme.userMessageTextColor : theme.characterMessageTextColor)
+                .font(message.role == .user ? theme.userMessageFont : theme.characterMessageFont)
+                .foregroundColor(message.role == .user ? theme.userMessageTextColor : theme.characterMessageTextColor)
         }
     }
     
     var body: some View {
         HStack {
-            if message.isUser {
+            if message.role == .user {
                 Spacer()
                 messageContent
                     .padding(.all, 12.0)

@@ -38,7 +38,7 @@ public struct ChatView: View {
     private var chatList: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                ForEach(viewModel.messages) { message in
+                ForEach(viewModel.messages.filter { $0.role != .system }) { message in
                     MessageView(message: message, theme: theme, retryAction: viewModel.retry)
                         .id(message.id)
                 }
@@ -87,7 +87,7 @@ public struct ChatView: View {
 class MockChatProvider: ChatProvider {
     func performChat(withMessages messages: [Message]) async throws -> Message {
         // Return a mock message
-        Message(text: "Mock response", isUser: false)
+        Message(text: "Mock response", role: .assistant)
     }
 }
 

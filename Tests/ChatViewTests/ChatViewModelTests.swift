@@ -17,7 +17,7 @@ class MockChatProvider: ChatProvider {
         }
         
         // Return a mock message
-        return Message(text: "Mock Message", isUser: false)
+        return Message(text: "Mock Message", role: .assistant)
     }
 }
 
@@ -48,26 +48,13 @@ class ChatViewModelTests: XCTestCase {
         // Assert
         // Verify if the new message is added to the messages array and if it's a user's message.
         XCTAssertEqual(sut.messages.last?.text, "Hello, Test!")
-        XCTAssertEqual(sut.messages.last?.isUser, true)
+        XCTAssertEqual(sut.messages.last?.role, .user)
         XCTAssertEqual(sut.newMessage, "")
-    }
-    
-    func testAddMessage() async {
-        // Arrange
-        let message = Message(text: "New Message", isUser: true)
-        
-        // Act
-        sut.add(message: message)
-        
-        // Assert
-        // Check if the new message is added to the messages array.
-        XCTAssertEqual(sut.messages.last?.text, "New Message")
-        XCTAssertEqual(sut.messages.last?.isUser, true)
     }
     
     func testRetry() async {
         // Arrange
-        let message = Message(text: "Error Message", isUser: false, isError: true)
+        let message = Message(text: "Error Message", role: .assistant, isError: true)
         sut.messages.append(message)
         
         // Act

@@ -16,7 +16,6 @@ public class ChatViewModel: ObservableObject {
     @Published var newMessage: String = ""
     @Published var errorMessage: String?
     
-    let systemPrompt: String
     let triggers: [ChatResponseTrigger]?
     
     private let chatProvider: any ChatProvider
@@ -25,7 +24,6 @@ public class ChatViewModel: ObservableObject {
          chatProvider: any ChatProvider,
          triggers: [ChatResponseTrigger]? = nil,
          messages: [Message] = []) {
-        self.systemPrompt = systemPrompt
         self.triggers = triggers
         self.chatProvider = chatProvider
         self.messages = messages
@@ -39,7 +37,7 @@ public class ChatViewModel: ObservableObject {
     
     func sendMessage() {
         guard !newMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        add(message: Message(text: newMessage, isUser: true))
+        add(message: Message(text: newMessage, role: .user))
         newMessage = ""
     }
     
@@ -59,36 +57,25 @@ public class ChatViewModel: ObservableObject {
     // MARK: - Private Methods
     
     private func performChatGPTCall() {
+        updateOnMain {
+            self.messages.append(Message(text: "", role: .user, isReceiving: true))
+        }
         Task {
             do {
                 let newMessage = try await chatProvider.performChat(withMessages: messages)
                 updateOnMain {
-                    self.messages.append(newMessage)
+                    self.messages[self.messages.count - 1] = newMessage
+                    self.triggers?.forEach { trigger in
+                        if trigger.shouldActivate(forChatResponse: newMessage.text) {
+                            trigger.activate()
+                        }
+                    }
                 }
             } catch {
                 handleGPTError(error)
             }
         }
     }
-//
-//    private func processGPTResult(_ result: ChatResult) {
-//        guard let text = result.choices.first?.message.content else {
-//            updateOnMain {
-//                self.errorMessage = "There was an error receiving the response. Please try again."
-//            }
-//            return
-//        }
-//
-//        updateOnMain {
-//            let message = self.messages[self.messages.count - 1]
-//            self.messages[self.messages.count - 1] = message.copyWith(text: text, isReceiving: false)
-//            self.triggers?.forEach { trigger in
-//                if trigger.shouldActivate(forChatResponse: text) {
-//                    trigger.activate()
-//                }
-//            }
-//        }
-//    }
     
     private func handleGPTError(_ error: Error) {
         updateOnMain {
