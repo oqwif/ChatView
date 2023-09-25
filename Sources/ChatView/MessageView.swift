@@ -5,6 +5,11 @@
 //
 
 import SwiftUI
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
 
 struct MessageView: View {
     var message: Message
@@ -37,6 +42,16 @@ struct MessageView: View {
         }
     }
     
+    func copyTextToClipboard(text: String) {
+#if os(macOS)
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(text, forType: .string)
+#else
+        UIPasteboard.general.string = text
+#endif
+    }
+    
     var body: some View {
         HStack {
             if message.role == .user {
@@ -47,7 +62,7 @@ struct MessageView: View {
                     .cornerRadius(15)
                     .contextMenu {
                         Button(action: {
-                            UIPasteboard.general.string = message.text
+                            copyTextToClipboard(text: message.text)
                         }) {
                             Label("Copy", systemImage: "doc.on.doc")
                         }
@@ -59,7 +74,7 @@ struct MessageView: View {
                     .cornerRadius(15)
                     .contextMenu {
                         Button(action: {
-                            UIPasteboard.general.string = message.text
+                            copyTextToClipboard(text: message.text)
                         }) {
                             Label("Copy", systemImage: "doc.on.doc")
                         }
@@ -75,7 +90,7 @@ struct AnimatedEllipsisView: View {
     var color: Color
     var size: CGFloat
     @State private var visibleDots = 0
-
+    
     var body: some View {
         HStack(spacing: size / 2) {
             ForEach(0..<3) { index in
