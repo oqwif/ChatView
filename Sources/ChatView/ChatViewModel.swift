@@ -15,6 +15,7 @@ public class ChatViewModel: ObservableObject {
     @Published var messages: [Message] = []
     @Published var newMessage: String = ""
     @Published var errorMessage: String?
+    @Published var isMessageViewTapped: Bool = false
     
     let triggers: [ChatResponseTrigger]?
     

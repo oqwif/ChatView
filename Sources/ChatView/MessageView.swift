@@ -45,11 +45,25 @@ struct MessageView: View {
                     .padding(.all, 12.0)
                     .background(theme.userMessageBackgroundColor)
                     .cornerRadius(15)
+                    .contextMenu {
+                        Button(action: {
+                            UIPasteboard.general.string = message.text
+                        }) {
+                            Label("Copy", systemImage: "doc.on.doc")
+                        }
+                    }
             } else {
                 messageContent
                     .padding(.all, 12.0)
                     .background(theme.characterMessageBackgroundColor)
                     .cornerRadius(15)
+                    .contextMenu {
+                        Button(action: {
+                            UIPasteboard.general.string = message.text
+                        }) {
+                            Label("Copy", systemImage: "doc.on.doc")
+                        }
+                    }
                 Spacer()
             }
         }

@@ -23,6 +23,7 @@ public struct ChatView: View {
                 chatList
                 messageInputField
             }
+            .blur(radius: viewModel.isMessageViewTapped ? 5.0 : 0)
         }
         .task {
             await viewModel.startChat()
