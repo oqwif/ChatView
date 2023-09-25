@@ -5,14 +5,13 @@
 //
 
 import Foundation
-import OpenAI  // https://github.com/MacPaw/OpenAI
 
 enum ChatViewModelError: Error {
     case notConnected
     case other(String)
 }
 
-class ChatViewModel: ObservableObject {
+public class ChatViewModel: ObservableObject {
     @Published var messages: [Message] = []
     @Published var newMessage: String = ""
     @Published var errorMessage: String?
@@ -21,18 +20,18 @@ class ChatViewModel: ObservableObject {
     let userID: String?
     let triggers: [ChatResponseTrigger]?
     
-    private let openAI: OpenAI
-    private let model: String
+    private let chatProvider: any ChatProvider
     
-    init(systemPrompt: String, token: String, userID: String? = nil, triggers: [ChatResponseTrigger]? = nil) {
+    init(systemPrompt: String,
+         chatProvider: any ChatProvider,
+         userID: String? = nil,
+         triggers: [ChatResponseTrigger]? = nil,
+         messages: [Message] = []) {
         self.systemPrompt = systemPrompt
         self.userID = userID
         self.triggers = triggers
-        self.model = Bundle.main.infoDictionary?["OpenAIModel"] as? String ?? "gpt-3.5-turbo"
-        
-        let host = Bundle.main.infoDictionary?["OpenAIHost"] as? String ?? "api.openai.com"
-        let configuration = OpenAI.Configuration(token: token, host: host, timeoutInterval: 90)
-        self.openAI = OpenAI(configuration: configuration)
+        self.chatProvider = chatProvider
+        self.messages = messages
     }
     
     // MARK: - Public Methods
@@ -65,63 +64,34 @@ class ChatViewModel: ObservableObject {
     private func performChatGPTCall() {
         Task {
             do {
-                try await callChatGPT()
+                let newMessage = try await chatProvider.performChat(withMessages: messages, userID: userID)
+                updateOnMain {
+                    self.messages.append(newMessage)
+                }
             } catch {
                 handleGPTError(error)
             }
         }
     }
-    
-    private func callChatGPT() async throws {
-        updateOnMain {
-            self.messages.append(Message(text: "", isUser: false, isReceiving: true))
-        }
-        
-        let chats = prepareChats()
-        let query = prepareQuery(chats: chats)
-        
-        do {
-            let result = try await openAI.chats(query: query)
-            processGPTResult(result)
-        } catch {
-            handleGPTError(error)
-        }
-    }
-    
-    private func prepareChats() -> [Chat] {
-        return [Chat(role: .system, content: systemPrompt)] + messages.map { Chat(role: $0.isUser ? .user : .assistant, content: $0.text) }
-    }
-    
-    private func prepareQuery(chats: [Chat]) -> ChatQuery {
-        return ChatQuery(
-            model: self.model,
-            messages: chats,
-            functions: nil,
-            functionCall: nil,
-            temperature: 0.4,
-            maxTokens: 500,
-            user: userID
-        )
-    }
-    
-    private func processGPTResult(_ result: ChatResult) {
-        guard let text = result.choices.first?.message.content else {
-            updateOnMain {
-                self.errorMessage = "There was an error receiving the response. Please try again."
-            }
-            return
-        }
-        
-        updateOnMain {
-            let message = self.messages[self.messages.count - 1]
-            self.messages[self.messages.count - 1] = message.copyWith(text: text, isReceiving: false)
-            self.triggers?.forEach { trigger in
-                if trigger.shouldActivate(forChatResponse: text) {
-                    trigger.activate()
-                }
-            }
-        }
-    }
+//
+//    private func processGPTResult(_ result: ChatResult) {
+//        guard let text = result.choices.first?.message.content else {
+//            updateOnMain {
+//                self.errorMessage = "There was an error receiving the response. Please try again."
+//            }
+//            return
+//        }
+//
+//        updateOnMain {
+//            let message = self.messages[self.messages.count - 1]
+//            self.messages[self.messages.count - 1] = message.copyWith(text: text, isReceiving: false)
+//            self.triggers?.forEach { trigger in
+//                if trigger.shouldActivate(forChatResponse: text) {
+//                    trigger.activate()
+//                }
+//            }
+//        }
+//    }
     
     private func handleGPTError(_ error: Error) {
         updateOnMain {

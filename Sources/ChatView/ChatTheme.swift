@@ -8,18 +8,18 @@
 import SwiftUI
 
 public struct ChatTheme {
-    public var userMessageBackgroundColor: Color
-    public var characterMessageBackgroundColor: Color
-    public var userMessageFont: Font
-    public var characterMessageFont: Font
-    public var userMessageTextColor: Color
-    public var characterMessageTextColor: Color
-    public var errorMessageFont: Font
-    public var retryButtonFont: Font
-    public var retryButtonBackgroundColor: Color
-    public var retryButtonTextColor: Color
-    public var animatedEllipsisColor: Color
-    public var animatedEllipsisSize: CGFloat
+    public let userMessageBackgroundColor: Color
+    public let characterMessageBackgroundColor: Color
+    public let userMessageFont: Font
+    public let characterMessageFont: Font
+    public let userMessageTextColor: Color
+    public let characterMessageTextColor: Color
+    public let errorMessageFont: Font
+    public let retryButtonFont: Font
+    public let retryButtonBackgroundColor: Color
+    public let retryButtonTextColor: Color
+    public let animatedEllipsisColor: Color
+    public let animatedEllipsisSize: CGFloat
 
     public init(
         userMessageBackgroundColor: Color = Color.gray.opacity(0.2),

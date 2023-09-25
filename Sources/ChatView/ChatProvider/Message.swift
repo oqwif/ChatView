@@ -7,11 +7,19 @@
 import Foundation
 
 public struct Message: Identifiable, Equatable {
-    public var id = UUID()
-    var text: String
-    var isUser: Bool  // true for user's messages, false for other's messages
-    var isReceiving: Bool = false
-    var isError: Bool = false
+    public let id: UUID
+    public let text: String
+    public let isUser: Bool  // true for user's messages, false for other's messages
+    public let isReceiving: Bool
+    public let isError: Bool
+    
+    public init(id: UUID = UUID(), text: String, isUser: Bool, isReceiving: Bool = false, isError: Bool = false) {
+        self.id = id
+        self.text = text
+        self.isUser = isUser
+        self.isReceiving = isReceiving
+        self.isError = isError
+    }
     
     func copyWith(id: UUID? = nil, text: String? = nil, isUser: Bool? = nil, isReceiving: Bool? = nil, isError: Bool? = nil) -> Message {
         return Message(

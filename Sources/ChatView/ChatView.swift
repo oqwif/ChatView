@@ -12,13 +12,9 @@ public struct ChatView: View {
     
     @State private var showErrorAlert = false
     
-    public init(systemPrompt: String, token: String, userID: String? = nil, theme: ChatTheme? = nil) {
+    public init(viewModel: ChatViewModel, theme: ChatTheme? = nil) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
         self.theme = theme ?? ChatTheme()
-        _viewModel = StateObject(wrappedValue: ChatViewModel(
-            systemPrompt: systemPrompt,
-            token: token,
-            userID: userID,
-            triggers: nil))
     }
     
     public var body: some View {
@@ -88,9 +84,18 @@ public struct ChatView: View {
     }
 }
 
+class MockChatProvider: ChatProvider {
+    func performChat(withMessages messages: [Message], userID: String?) async throws -> Message {
+        // Return a mock message
+        Message(text: "Mock response", isUser: false)
+    }
+}
+
 struct ChatView_Previews: PreviewProvider {
     static var previews: some View {
-        ChatView(systemPrompt: "Imagine you are Benjamin Franklin, living during their respective time. Answer the users' questions in the manner and knowledge consistent with their time and persona. Start by introducing yourself.",
-                 token: "12345")
+        let viewModel = ChatViewModel(systemPrompt: "Imagine you are Benjamin Franklin...",
+                                      chatProvider: MockChatProvider(),
+                                      messages: Message.sampleMessages) // Pass sample messages here
+        return ChatView(viewModel: viewModel)
     }
 }
