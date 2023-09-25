@@ -20,13 +20,13 @@ public class ChatViewModel: ObservableObject {
     
     private let chatProvider: any ChatProvider
     
-    public init(systemPrompt: String,
-         chatProvider: any ChatProvider,
-         triggers: [ChatResponseTrigger]? = nil,
-         messages: [Message] = []) {
-        self.triggers = triggers
-        self.chatProvider = chatProvider
-        self.messages = messages
+    public init(
+        chatProvider: any ChatProvider,
+        triggers: [ChatResponseTrigger]? = nil,
+        messages: [Message] = []) {
+            self.triggers = triggers
+            self.chatProvider = chatProvider
+            self.messages = messages
     }
     
     // MARK: - Public Methods

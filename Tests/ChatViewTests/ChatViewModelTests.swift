@@ -29,7 +29,7 @@ class ChatViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockChatProvider = MockChatProvider()
-        sut = ChatViewModel(systemPrompt: "Test", chatProvider: mockChatProvider)
+        sut = ChatViewModel(chatProvider: mockChatProvider)
     }
     
     override func tearDown() {

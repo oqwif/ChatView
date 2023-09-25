@@ -93,8 +93,7 @@ class MockChatProvider: ChatProvider {
 
 struct ChatView_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = ChatViewModel(systemPrompt: "Imagine you are Benjamin Franklin...",
-                                      chatProvider: MockChatProvider(),
+        let viewModel = ChatViewModel(chatProvider: MockChatProvider(),
                                       messages: Message.sampleMessages) // Pass sample messages here
         return ChatView(viewModel: viewModel)
     }
