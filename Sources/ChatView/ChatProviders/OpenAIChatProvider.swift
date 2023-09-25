@@ -8,12 +8,20 @@
 import Foundation
 import OpenAI
 
-public struct OpenAIChatProvider: ChatProvider {
+public class OpenAIChatProvider: ChatProvider {
     let openAI: OpenAI
     let temperature: OpenAIChatTemperature
     let model: String       // e.g. "gpt-3.5-turbo"
     let maxTokens: Int?
     let userID: String?
+    
+    public init(openAI: OpenAI, temperature: OpenAIChatTemperature = .creativeWriting, model: String = "gpt-3.5-turbo", maxTokens: Int? = nil, userID: String? = nil) {
+        self.openAI = openAI
+        self.temperature = temperature
+        self.model = model
+        self.maxTokens = maxTokens
+        self.userID = userID
+    }
     
     public func performChat(withMessages messages: [Message]) async throws -> Message {
         
