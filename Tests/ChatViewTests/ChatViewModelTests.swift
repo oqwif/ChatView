@@ -11,7 +11,7 @@ import XCTest
 class MockChatProvider: ChatProvider {
     var shouldReturnError = false
     
-    func performChat(withMessages messages: [Message], userID: String?) async throws -> Message {
+    func performChat(withMessages messages: [Message]) async throws -> Message {
         if shouldReturnError {
             throw NSError(domain: "MockChatProvider", code: 1, userInfo: [NSLocalizedDescriptionKey: "Test Error"])
         }
@@ -29,7 +29,7 @@ class ChatViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockChatProvider = MockChatProvider()
-        sut = ChatViewModel(systemPrompt: "Test", chatProvider: mockChatProvider, userID: "123")
+        sut = ChatViewModel(systemPrompt: "Test", chatProvider: mockChatProvider)
     }
     
     override func tearDown() {

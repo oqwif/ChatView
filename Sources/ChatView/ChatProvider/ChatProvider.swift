@@ -8,5 +8,5 @@
 import Foundation
 
 public protocol ChatProvider {
-    func performChat(withMessages messages: [Message], userID: String?) async throws -> Message
+    func performChat(withMessages messages: [Message]) async throws -> Message
 }

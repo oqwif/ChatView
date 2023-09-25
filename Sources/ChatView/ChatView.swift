@@ -85,7 +85,7 @@ public struct ChatView: View {
 }
 
 class MockChatProvider: ChatProvider {
-    func performChat(withMessages messages: [Message], userID: String?) async throws -> Message {
+    func performChat(withMessages messages: [Message]) async throws -> Message {
         // Return a mock message
         Message(text: "Mock response", isUser: false)
     }

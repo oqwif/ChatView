@@ -17,18 +17,15 @@ public class ChatViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     let systemPrompt: String
-    let userID: String?
     let triggers: [ChatResponseTrigger]?
     
     private let chatProvider: any ChatProvider
     
     init(systemPrompt: String,
          chatProvider: any ChatProvider,
-         userID: String? = nil,
          triggers: [ChatResponseTrigger]? = nil,
          messages: [Message] = []) {
         self.systemPrompt = systemPrompt
-        self.userID = userID
         self.triggers = triggers
         self.chatProvider = chatProvider
         self.messages = messages
@@ -64,7 +61,7 @@ public class ChatViewModel: ObservableObject {
     private func performChatGPTCall() {
         Task {
             do {
-                let newMessage = try await chatProvider.performChat(withMessages: messages, userID: userID)
+                let newMessage = try await chatProvider.performChat(withMessages: messages)
                 updateOnMain {
                     self.messages.append(newMessage)
                 }

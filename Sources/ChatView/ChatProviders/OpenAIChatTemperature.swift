@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ChatTemperature: String, CaseIterable {
+enum OpenAIChatTemperature: String, CaseIterable {
     case codeGeneration = "Code Generation"
     case creativeWriting = "Creative Writing"
     case chatbotResponses = "Chatbot Responses"
