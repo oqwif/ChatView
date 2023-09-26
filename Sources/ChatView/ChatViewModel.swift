@@ -55,6 +55,11 @@ public class ChatViewModel: ObservableObject {
         performChatGPTCall()
     }
     
+    func newChat() {
+        messages.removeAll { $0.role != .system }
+        performChatGPTCall()
+    }
+    
     // MARK: - Private Methods
     
     private func performChatGPTCall() {
