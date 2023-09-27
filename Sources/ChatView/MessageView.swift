@@ -11,10 +11,16 @@ import AppKit
 import UIKit
 #endif
 
-struct MessageView: View {
-    var message: Message
-    var theme: ChatTheme
-    var retryAction: (() -> Void)? // Retry action closure
+public struct MessageView: View {
+    public var message: Message
+    public var theme: ChatTheme
+    public var retryAction: (() -> Void)? // Retry action closure
+    
+    public init(message: Message, theme: ChatTheme, retryAction: (() -> Void)?) {
+        self.message = message
+        self.theme = theme
+        self.retryAction = retryAction
+    }
     
     @ViewBuilder
     var messageContent: some View {
@@ -52,7 +58,7 @@ struct MessageView: View {
 #endif
     }
     
-    var body: some View {
+    public var body: some View {
         HStack {
             if message.role == .user {
                 Spacer()
@@ -86,12 +92,17 @@ struct MessageView: View {
     }
 }
 
-struct AnimatedEllipsisView: View {
-    var color: Color
-    var size: CGFloat
+public struct AnimatedEllipsisView: View {
+    public var color: Color
+    public var size: CGFloat
     @State private var visibleDots = 0
     
-    var body: some View {
+    public init(color: Color, size: CGFloat) {
+        self.color = color
+        self.size = size
+    }
+    
+    public var body: some View {
         HStack(spacing: size / 2) {
             ForEach(0..<3) { index in
                 Circle()

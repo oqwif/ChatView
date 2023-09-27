@@ -27,7 +27,7 @@ public struct Message: Identifiable, Equatable {
         self.isError = isError
     }
     
-    func copyWith(id: UUID? = nil, text: String? = nil, role: Role? = nil, isReceiving: Bool? = nil, isError: Bool? = nil) -> Message {
+    public func copyWith(id: UUID? = nil, text: String? = nil, role: Role? = nil, isReceiving: Bool? = nil, isError: Bool? = nil) -> Message {
         return Message(
             id: id ?? self.id,
             text: text ?? self.text,

@@ -6,15 +6,17 @@
 
 import SwiftUI
 
-public struct ChatView: View {
+public struct ChatView<Content: View>: View {
     @StateObject private var viewModel: ChatViewModel
     public let theme: ChatTheme
     
     @State private var showErrorAlert = false
+    private let content: (Message, ChatTheme, (() -> Void)?) -> Content
     
-    public init(viewModel: ChatViewModel, theme: ChatTheme? = nil) {
+    public init(viewModel: ChatViewModel, theme: ChatTheme? = nil, @ViewBuilder content: @escaping (Message, ChatTheme, (() -> Void)?) -> Content) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.theme = theme ?? ChatTheme()
+        self.content = content
     }
     
     public var body: some View {
@@ -40,7 +42,7 @@ public struct ChatView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 ForEach(viewModel.messages.filter { $0.role != .system }) { message in
-                    MessageView(message: message, theme: theme, retryAction: viewModel.retry)
+                    content(message, theme, viewModel.retry)
                         .id(message.id)
                 }
             }
@@ -96,6 +98,8 @@ struct ChatView_Previews: PreviewProvider {
     static var previews: some View {
         let viewModel = ChatViewModel(chatProvider: MockChatProvider(),
                                       messages: Message.sampleMessages) // Pass sample messages here
-        return ChatView(viewModel: viewModel)
+        return ChatView<MessageView>(viewModel: viewModel) { message, theme, retryAction in
+            MessageView(message: message, theme: theme, retryAction: retryAction)
+        }
     }
 }
