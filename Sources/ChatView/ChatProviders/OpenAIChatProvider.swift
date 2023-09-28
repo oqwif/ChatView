@@ -8,6 +8,29 @@
 import Foundation
 import OpenAI
 
+public enum OpenAIChatProviderError: Error {
+    case invalidResponse
+    case maxTokensExceeded
+    case contentFilterException
+    case noResponseMessageContent
+    case other(String)  // Generic error type for other unforeseen errors
+    
+    public var localizedDescription: String {
+        switch self {
+        case .invalidResponse:
+            return "Invalid response from API."
+        case .maxTokensExceeded:
+            return "The maximum number of tokens specified in the request was reached."
+        case .contentFilterException:
+            return "Content was omitted due to a flag from API content filters."
+        case .noResponseMessageContent:
+            return "No content was received in the message returned from the API."
+        case .other(let message):
+            return message
+        }
+    }
+}
+
 public class OpenAIChatProvider: ChatProvider {
     let openAI: OpenAI
     let temperature: OpenAIChatTemperature
@@ -40,9 +63,22 @@ public class OpenAIChatProvider: ChatProvider {
             // Perform the actual OpenAI chat
             let result = try await openAI.chats(query: query)
             
+            // Get the first choice from the response
+            guard let firstChoice = result.choices.first else {
+                throw OpenAIChatProviderError.invalidResponse
+            }
+            
+            guard firstChoice.finishReason != "length" else {
+                throw OpenAIChatProviderError.maxTokensExceeded
+            }
+            
+            guard firstChoice.finishReason != "content_filter" else {
+                throw OpenAIChatProviderError.contentFilterException
+            }
+            
             // Transform the result to [Message] and return the latest one.
             guard let text = result.choices.first?.message.content else {
-                throw NSError(domain: "OpenAI", code: 1, userInfo: [NSLocalizedDescriptionKey: "Invalid response"])
+                throw OpenAIChatProviderError.noResponseMessageContent
             }
             
             return Message(text: text, role: .assistant)
