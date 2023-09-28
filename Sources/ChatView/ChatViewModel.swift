@@ -55,8 +55,12 @@ public class ChatViewModel: ObservableObject {
         performChatGPTCall()
     }
     
-    public func resetChat() {
-        messages.removeAll { $0.role != .system }
+    public func resetChat(messages: [Message]? = nil) {
+        if let messages = messages {
+            self.messages = messages
+        } else {
+            self.messages.removeAll { $0.role != .system }
+        }
         performChatGPTCall()
     }
     
