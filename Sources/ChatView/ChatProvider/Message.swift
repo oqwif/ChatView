@@ -18,22 +18,25 @@ public struct Message: Identifiable, Equatable {
     public let role: Role  // true for user's messages, false for other's messages
     public let isReceiving: Bool
     public let isError: Bool
+    public let isHidden: Bool
     
-    public init(id: UUID = UUID(), text: String, role: Role, isReceiving: Bool = false, isError: Bool = false) {
+    public init(id: UUID = UUID(), text: String, role: Role, isReceiving: Bool = false, isError: Bool = false, isHidden: Bool = false) {
         self.id = id
         self.text = text
         self.role = role
         self.isReceiving = isReceiving
         self.isError = isError
+        self.isHidden = isHidden
     }
     
-    public func copyWith(id: UUID? = nil, text: String? = nil, role: Role? = nil, isReceiving: Bool? = nil, isError: Bool? = nil) -> Message {
+    public func copyWith(id: UUID? = nil, text: String? = nil, role: Role? = nil, isReceiving: Bool? = nil, isError: Bool? = nil, isHidden: Bool? = nil) -> Message {
         return Message(
             id: id ?? self.id,
             text: text ?? self.text,
             role: role ?? self.role,
             isReceiving: isReceiving ?? self.isReceiving,
-            isError: isError ?? self.isError
+            isError: isError ?? self.isError,
+            isHidden: isHidden ?? self.isHidden
         )
     }
 }

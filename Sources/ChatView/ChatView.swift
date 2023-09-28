@@ -41,7 +41,7 @@ public struct ChatView<Content: View>: View {
     private var chatList: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                ForEach(viewModel.messages.filter { $0.role != .system }) { message in
+                ForEach(viewModel.messages.filter { $0.role != .system && $0.isHidden == false}) { message in
                     content(message, theme, viewModel.retry)
                         .id(message.id)
                 }
