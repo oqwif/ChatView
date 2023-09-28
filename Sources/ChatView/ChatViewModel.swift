@@ -42,7 +42,7 @@ public class ChatViewModel: ObservableObject {
         newMessage = ""
     }
     
-    func add(message: Message) {
+    public func add(message: Message) {
         messages.append(message)
         performChatGPTCall()
     }
