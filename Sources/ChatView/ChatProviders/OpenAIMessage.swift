@@ -57,6 +57,8 @@ public extension OpenAIMessage {
                 return Chat.Role.system
             case .user:
                 return Chat.Role.user
+            case .function:
+                return Chat.Role.function
             }
         }
     }

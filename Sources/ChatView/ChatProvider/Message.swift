@@ -10,6 +10,7 @@ public enum MessageRole {
     case system
     case assistant
     case user
+    case function
 }
 
 public protocol Message: Identifiable, Equatable {
