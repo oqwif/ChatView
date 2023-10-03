@@ -13,6 +13,8 @@ public enum OpenAIChatProviderError: Error {
     case maxTokensExceeded
     case contentFilterException
     case noResponseMessageContent
+    case noFunctionNameSpecified
+    case noFunctionMatch(String)
     case other(String)  // Generic error type for other unforeseen errors
     
     public var localizedDescription: String {
@@ -25,6 +27,10 @@ public enum OpenAIChatProviderError: Error {
             return "Content was omitted due to a flag from API content filters."
         case .noResponseMessageContent:
             return "No content was received in the message returned from the API."
+        case .noFunctionNameSpecified:
+            return "The API tried to call a function but no name was specified"
+        case .noFunctionMatch(let name):
+            return "The API tried to call an unmatched function called \(name)."
         case .other(let message):
             return message
         }
@@ -38,9 +44,9 @@ public class OpenAIChatProvider: ChatProvider {
     let model: String       // e.g. "gpt-3.5-turbo"
     let maxTokens: Int?
     let userID: String?
-    let functions: [ChatFunctionDeclaration]?
+    let functions: [OpenAIFunction]?
     
-    public init(openAI: OpenAI, temperature: OpenAIChatTemperature = .creativeWriting, model: String = "gpt-3.5-turbo", maxTokens: Int? = nil, userID: String? = nil, functions: [ChatFunctionDeclaration]? = nil) {
+    public init(openAI: OpenAI, temperature: OpenAIChatTemperature = .creativeWriting, model: String = "gpt-3.5-turbo", maxTokens: Int? = nil, userID: String? = nil, functions: [OpenAIFunction]? = nil) {
         self.openAI = openAI
         self.temperature = temperature
         self.model = model
@@ -53,12 +59,12 @@ public class OpenAIChatProvider: ChatProvider {
         guard let messages = messages as? [OpenAIMessage] else {
             fatalError("messages are not of type OpenAIMessage")
         }
-        let chats = messages.map { $0.openAIChat }
+        let chats = messages.map { $0.chat }
         
         let query = ChatQuery(
             model: model,
             messages: chats,
-            functions: functions,
+            functions: functions?.map { $0.chatFunctionDeclaration },
             functionCall: nil,
             temperature: temperature.temperature,
             maxTokens: maxTokens,
@@ -82,16 +88,34 @@ public class OpenAIChatProvider: ChatProvider {
                 throw OpenAIChatProviderError.contentFilterException
             }
             
-//            if firstChoice.finishReason == "function_call" {
-//                chat = Chat(role: .assistant, )
-//            }
-            
-            // Transform the result to [Message] and return the latest one.
-            guard let text = result.choices.first?.message.content else {
-                throw OpenAIChatProviderError.noResponseMessageContent
+            var chat: Chat
+            if firstChoice.finishReason == "function_call" {
+                guard let functionName = firstChoice.message.functionCall?.name else {
+                    throw OpenAIChatProviderError.noFunctionNameSpecified
+                }
+                guard let functions = self.functions else {
+                    throw OpenAIChatProviderError.noFunctionMatch(functionName)
+                }
+                
+                let functionMap = functions.reduce(into: [String: OpenAIFunction]()) { (result, function) in
+                    result[function.chatFunctionDeclaration.name] = function
+                }
+                
+                guard let function = functionMap[functionName] else {
+                    throw OpenAIChatProviderError.noFunctionMatch(functionName)
+                }
+                
+                let result = function.call()
+                chat = Chat(role: .function, content: result, name: functionName)
+            } else {
+                guard let chatResult = result.choices.first?.message else {
+                    throw OpenAIChatProviderError.noResponseMessageContent
+                }
+                
+                chat = chatResult
             }
-            
-            return OpenAIMessage(text: text, role: .assistant)
+
+            return OpenAIMessage(chat: chat)
         } catch {
             // Propagate the error to the caller.
             throw error

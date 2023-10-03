@@ -92,6 +92,10 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
                             trigger.activate()
                         }
                     }
+                    if message.role == .function {
+                        // If it is a function result, call GPT again so that it can see the result
+                        self.performChatGPTCall()
+                    }
                 }
             } catch {
                 handleGPTError(error)
