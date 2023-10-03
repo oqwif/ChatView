@@ -6,14 +6,14 @@
 
 import SwiftUI
 
-public struct ChatView<Content: View>: View {
-    @StateObject private var viewModel: ChatViewModel
+public struct ChatView<MessageType: Message, Content: View>: View {
+    @StateObject private var viewModel: ChatViewModel<MessageType>
     public let theme: ChatTheme
     
     @State private var showErrorAlert = false
-    private let content: (Message, ChatTheme, (() -> Void)?) -> Content
+    private let content: (MessageType, ChatTheme, (() -> Void)?) -> Content
     
-    public init(viewModel: ChatViewModel, theme: ChatTheme? = nil, @ViewBuilder content: @escaping (Message, ChatTheme, (() -> Void)?) -> Content) {
+    public init(viewModel: ChatViewModel<MessageType>, theme: ChatTheme? = nil, @ViewBuilder content: @escaping (MessageType, ChatTheme, (() -> Void)?) -> Content) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.theme = theme ?? ChatTheme()
         self.content = content
@@ -87,17 +87,18 @@ public struct ChatView<Content: View>: View {
 }
 
 class MockChatProvider: ChatProvider {
-    func performChat(withMessages messages: [Message]) async throws -> Message {
-        // Return a mock message
-        Message(text: "Mock response", role: .assistant)
+    func performChat(withMessages messages: [any Message]) async throws -> any Message {
+        return MockMessage(text: "Assistant response", role: MessageRole.assistant)
     }
 }
 
 struct ChatView_Previews: PreviewProvider {
     static var previews: some View {
-        let viewModel = ChatViewModel(chatProvider: MockChatProvider(),
-                                      messages: Message.sampleMessages) // Pass sample messages here
-        return ChatView<MessageView>(viewModel: viewModel) { message, theme, retryAction in
+        let mockMessages = MockMessage.sampleMessages
+        let viewModel = ChatViewModel<MockMessage>(chatProvider: MockChatProvider(),
+                                      messages: mockMessages) // Pass sample messages here
+
+        return ChatView(viewModel: viewModel) { (message: MockMessage, theme, retryAction) in
             MessageView(message: message, theme: theme, retryAction: retryAction)
         }
     }

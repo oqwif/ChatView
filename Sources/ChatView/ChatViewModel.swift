@@ -11,8 +11,8 @@ enum ChatViewModelError: Error {
     case other(String)
 }
 
-public class ChatViewModel: ObservableObject {
-    @Published var messages: [Message] = []
+public class ChatViewModel<MessageType: Message>: ObservableObject {
+    @Published var messages: [MessageType] = []
     @Published var newMessage: String = ""
     @Published var errorMessage: String?
     @Published var isMessageViewTapped: Bool = false
@@ -24,7 +24,7 @@ public class ChatViewModel: ObservableObject {
     public init(
         chatProvider: any ChatProvider,
         triggers: [ChatResponseTrigger]? = nil,
-        messages: [Message] = []) {
+        messages: [MessageType] = []) {
             self.triggers = triggers
             self.chatProvider = chatProvider
             self.messages = messages
@@ -38,11 +38,19 @@ public class ChatViewModel: ObservableObject {
     
     func sendMessage() {
         guard !newMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
-        add(message: Message(text: newMessage, role: .user))
+        let userMessage = MessageType(
+            id: UUID(),  // Provide a unique ID here
+            text: newMessage,
+            role: .user,
+            isReceiving: false,
+            isError: false,
+            isHidden: false
+        )
+        add(message: userMessage)
         newMessage = ""
     }
     
-    public func add(message: Message) {
+    public func add(message: MessageType) {
         messages.append(message)
         performChatGPTCall()
     }
@@ -55,7 +63,7 @@ public class ChatViewModel: ObservableObject {
         performChatGPTCall()
     }
     
-    public func resetChat(messages: [Message]? = nil) {
+    public func resetChat(messages: [MessageType]? = nil) {
         if let messages = messages {
             self.messages = messages
         } else {
@@ -68,13 +76,17 @@ public class ChatViewModel: ObservableObject {
     
     private func performChatGPTCall() {
         updateOnMain {
-            self.messages.append(Message(text: "", role: .assistant, isReceiving: true))
+            // need to refactor this out. I don't like how it adding a temp message
+            self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
         }
         Task {
             do {
                 let newMessage = try await chatProvider.performChat(withMessages: messages)
+                guard let message = newMessage as? MessageType else {
+                    fatalError("MessageType is incorrect")
+                }
                 updateOnMain {
-                    self.messages[self.messages.count - 1] = newMessage
+                    self.messages[self.messages.count - 1] = message
                     self.triggers?.forEach { trigger in
                         if trigger.shouldActivate(forChatResponse: newMessage.text) {
                             trigger.activate()

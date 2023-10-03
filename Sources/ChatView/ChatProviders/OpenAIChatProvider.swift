@@ -31,28 +31,34 @@ public enum OpenAIChatProviderError: Error {
     }
 }
 
+
 public class OpenAIChatProvider: ChatProvider {
     let openAI: OpenAI
     let temperature: OpenAIChatTemperature
     let model: String       // e.g. "gpt-3.5-turbo"
     let maxTokens: Int?
     let userID: String?
+    let functions: [ChatFunctionDeclaration]?
     
-    public init(openAI: OpenAI, temperature: OpenAIChatTemperature = .creativeWriting, model: String = "gpt-3.5-turbo", maxTokens: Int? = nil, userID: String? = nil) {
+    public init(openAI: OpenAI, temperature: OpenAIChatTemperature = .creativeWriting, model: String = "gpt-3.5-turbo", maxTokens: Int? = nil, userID: String? = nil, functions: [ChatFunctionDeclaration]? = nil) {
         self.openAI = openAI
         self.temperature = temperature
         self.model = model
         self.maxTokens = maxTokens
         self.userID = userID
+        self.functions = functions
     }
     
-    public func performChat(withMessages messages: [Message]) async throws -> Message {
-        let chats = messages.map { Chat(role: $0.role == .system ? .system : $0.role == .user ? .user : .assistant, content: $0.text) }
+    public func performChat(withMessages messages: [any Message]) async throws -> any Message {
+        guard let messages = messages as? [OpenAIMessage] else {
+            fatalError("messages are not of type OpenAIMessage")
+        }
+        let chats = messages.map { $0.openAIChat }
         
         let query = ChatQuery(
             model: model,
             messages: chats,
-            functions: nil,
+            functions: functions,
             functionCall: nil,
             temperature: temperature.temperature,
             maxTokens: maxTokens,
@@ -76,12 +82,16 @@ public class OpenAIChatProvider: ChatProvider {
                 throw OpenAIChatProviderError.contentFilterException
             }
             
+//            if firstChoice.finishReason == "function_call" {
+//                chat = Chat(role: .assistant, )
+//            }
+            
             // Transform the result to [Message] and return the latest one.
             guard let text = result.choices.first?.message.content else {
                 throw OpenAIChatProviderError.noResponseMessageContent
             }
             
-            return Message(text: text, role: .assistant)
+            return OpenAIMessage(text: text, role: .assistant)
         } catch {
             // Propagate the error to the caller.
             throw error

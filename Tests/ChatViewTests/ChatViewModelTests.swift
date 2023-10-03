@@ -11,19 +11,19 @@ import XCTest
 class MockChatProvider: ChatProvider {
     var shouldReturnError = false
     
-    func performChat(withMessages messages: [Message]) async throws -> Message {
+    func performChat(withMessages messages: [any Message]) async throws -> any Message {
         if shouldReturnError {
             throw NSError(domain: "MockChatProvider", code: 1, userInfo: [NSLocalizedDescriptionKey: "Test Error"])
         }
         
         // Return a mock message
-        return Message(text: "Mock Message", role: .assistant)
+        return MockMessage(text: "Mock Message", role: .assistant)
     }
 }
 
 class ChatViewModelTests: XCTestCase {
     
-    var sut: ChatViewModel! // system under test
+    var sut: ChatViewModel<MockMessage>! // system under test
     var mockChatProvider: MockChatProvider!
     
     override func setUp() {
@@ -54,7 +54,7 @@ class ChatViewModelTests: XCTestCase {
     
     func testRetry() async {
         // Arrange
-        let message = Message(text: "Error Message", role: .assistant, isError: true)
+        let message = MockMessage(text: "Error Message", role: .assistant, isError: true)
         sut.messages.append(message)
         
         // Act

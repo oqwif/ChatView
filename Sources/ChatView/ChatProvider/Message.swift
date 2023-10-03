@@ -6,51 +6,24 @@
 
 import Foundation
 
-public enum Role {
+public enum MessageRole {
     case system
     case assistant
     case user
 }
 
-public struct Message: Identifiable, Equatable {
-    public let id: UUID
-    public let text: String
-    public let role: Role  // true for user's messages, false for other's messages
-    public let isReceiving: Bool
-    public let isError: Bool
-    public let isHidden: Bool
+public protocol Message: Identifiable, Equatable {
+    var id: UUID { get }
+    var text: String { get }
+    var role: MessageRole { get }
+    var isReceiving: Bool { get }
+    var isError: Bool { get }
+    var isHidden: Bool { get }
     
-    public init(id: UUID = UUID(), text: String, role: Role, isReceiving: Bool = false, isError: Bool = false, isHidden: Bool = false) {
-        self.id = id
-        self.text = text
-        self.role = role
-        self.isReceiving = isReceiving
-        self.isError = isError
-        self.isHidden = isHidden
-    }
+    init(id: UUID, text: String, role: MessageRole, isReceiving: Bool, isError: Bool, isHidden: Bool)
     
-    public func copyWith(id: UUID? = nil, text: String? = nil, role: Role? = nil, isReceiving: Bool? = nil, isError: Bool? = nil, isHidden: Bool? = nil) -> Message {
-        return Message(
-            id: id ?? self.id,
-            text: text ?? self.text,
-            role: role ?? self.role,
-            isReceiving: isReceiving ?? self.isReceiving,
-            isError: isError ?? self.isError,
-            isHidden: isHidden ?? self.isHidden
-        )
-    }
-}
-
-extension Message {
-    static var sampleMessages: [Message] {
-        return [
-            Message(text: "Hello! How's it going?", role: .assistant),
-            Message(text: "Hi there! I'm good, thanks for asking. How about you?", role: .user),
-            Message(text: "I'm doing well! Have you seen the new movie that just came out?", role: .assistant),
-            Message(text: "Not yet, but I've heard great reviews about it.", role: .user),
-            Message(text: "You should definitely check it out. It's worth it!", role: .assistant),
-            Message(text: "", role: .assistant, isReceiving: true),
-            Message(text: "", role: .assistant, isError: true)
-        ]
-    }
+    func copyWith(
+        id: UUID?, text: String?, role: MessageRole?,
+        isReceiving: Bool?, isError: Bool?, isHidden: Bool?
+    ) -> Self
 }

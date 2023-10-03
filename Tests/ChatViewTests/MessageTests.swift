@@ -4,7 +4,7 @@ import XCTest
 class MessageTests: XCTestCase {
     
     func testMessageInitialization() {
-        let message = Message(text: "Hello!", role: .user)
+        let message = MockMessage(text: "Hello!", role: .user)
         
         XCTAssertNotNil(message.id)
         XCTAssertEqual(message.text, "Hello!")
@@ -14,7 +14,7 @@ class MessageTests: XCTestCase {
     }
     
     func testMessageCopyWith() {
-        let message = Message(text: "Hello!", role: .user)
+        let message = MockMessage(text: "Hello!", role: .user)
         let copiedMessage = message.copyWith(text: "Hello, World!")
         
         XCTAssertEqual(copiedMessage.text, "Hello, World!")
