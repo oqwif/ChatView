@@ -14,6 +14,7 @@ public enum OpenAIChatProviderError: Error {
     case contentFilterException
     case noResponseMessageContent
     case noFunctionNameSpecified
+    case noArgumentsSpecified
     case noFunctionMatch(String)
     case other(String)  // Generic error type for other unforeseen errors
     
@@ -29,6 +30,8 @@ public enum OpenAIChatProviderError: Error {
             return "No content was received in the message returned from the API."
         case .noFunctionNameSpecified:
             return "The API tried to call a function but no name was specified"
+        case .noArgumentsSpecified:
+            return "The API tried to call a function but no arguments were specified"
         case .noFunctionMatch(let name):
             return "The API tried to call an unmatched function called \(name)."
         case .other(let message):
@@ -93,6 +96,9 @@ public class OpenAIChatProvider: ChatProvider {
                 guard let functionName = firstChoice.message.functionCall?.name else {
                     throw OpenAIChatProviderError.noFunctionNameSpecified
                 }
+                guard let arguments = firstChoice.message.functionCall?.arguments else {
+                    throw OpenAIChatProviderError.noArgumentsSpecified
+                }
                 guard let functions = self.functions else {
                     throw OpenAIChatProviderError.noFunctionMatch(functionName)
                 }
@@ -105,7 +111,7 @@ public class OpenAIChatProvider: ChatProvider {
                     throw OpenAIChatProviderError.noFunctionMatch(functionName)
                 }
                 
-                let result = function.call()
+                let result = function.call(arguments: arguments)
                 chat = Chat(role: .function, content: result, name: functionName)
             } else {
                 guard let chatResult = result.choices.first?.message else {

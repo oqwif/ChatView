@@ -10,5 +10,5 @@ import OpenAI
 
 public protocol OpenAIFunction {
     var chatFunctionDeclaration: ChatFunctionDeclaration { get }
-    func call() -> String
+    func call(arguments: String) -> String
 }
