@@ -96,6 +96,7 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
                         // If it is a function result, call GPT again so that it can see the result
                         self.performChatGPTCall()
                     }
+                    self.newMessage = ""
                 }
             } catch {
                 handleGPTError(error)
