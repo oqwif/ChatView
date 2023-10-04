@@ -76,29 +76,33 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     
     private func performChatGPTCall() {
         updateOnMain {
-            // need to refactor this out. I don't like how it adding a temp message
+            if let lastMessage = self.messages.last, !lastMessage.isReceiving {
+                return
+            }
             self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
         }
         Task {
             do {
-                let newMessage = try await chatProvider.performChat(withMessages: messages)
-                guard let message = newMessage as? MessageType else {
+                let responseMessage = try await chatProvider.performChat(withMessages: messages)
+                guard let message = responseMessage as? MessageType else {
                     fatalError("MessageType is incorrect")
                 }
                 updateOnMain {
+                    self.newMessage = ""
                     self.messages[self.messages.count - 1] = message
                     self.triggers?.forEach { trigger in
-                        if trigger.shouldActivate(forChatResponse: newMessage.text) {
+                        if trigger.shouldActivate(forChatResponse: responseMessage.text) {
                             trigger.activate()
                         }
                     }
                     if message.role == .function {
                         // If it is a function result, call GPT again so that it can see the result
+                        self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
                         self.performChatGPTCall()
                     }
-                    self.newMessage = ""
                 }
             } catch {
+                self.newMessage = ""
                 handleGPTError(error)
             }
         }
