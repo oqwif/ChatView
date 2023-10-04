@@ -195,7 +195,7 @@ public class OpenAIChatProvider: ChatProvider {
         }
         
         if let requiredParams = function.chatFunctionDeclaration.parameters.required,
-           requiredParams.filter({ jsonObject.param($0) == nil }).count > 0 {
+           requiredParams.count > 0 && requiredParams.filter({ jsonObject.param($0) == nil }).count > 0 {
             throw FunctionCallError.requiredParametersNotSupplied
         }
         
