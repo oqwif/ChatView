@@ -83,7 +83,7 @@ extension Dictionary where Key == String, Value: Encodable {
         return String(data: jsonData, encoding: .utf8)
     }
 }
-    
+
 extension Dictionary where Key == String {
     func param(_ key: String) -> String? {
         if let value = self[key] {
@@ -94,6 +94,17 @@ extension Dictionary where Key == String {
             }
         }
         return nil
+    }
+}
+
+extension Encodable {
+    var jsonString: String? {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        guard let jsonData = try? encoder.encode(self) else {
+            return nil
+        }
+        return String(data: jsonData, encoding: .utf8)
     }
 }
 
@@ -174,6 +185,7 @@ public class OpenAIChatProvider: ChatProvider {
         var result: String
         do {
             let functionResult = try await execute(function, with: arguments)
+            
             result = functionResult.jsonString ?? ["status": "success"].jsonString!
         } catch {
             result = ["status": "failed", "error": error.localizedDescription].jsonString!
@@ -193,7 +205,7 @@ public class OpenAIChatProvider: ChatProvider {
         return function
     }
     
-    private func execute(_ function: OpenAIFunction, with arguments: String) async throws -> [String:Any] {
+    private func execute(_ function: OpenAIFunction, with arguments: String) async throws -> Encodable {
         guard let jsonObject = arguments.toJsonObject() else {
             throw FunctionCallError.unableToPassParameters
         }
