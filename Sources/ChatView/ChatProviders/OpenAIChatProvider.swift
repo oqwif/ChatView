@@ -9,7 +9,7 @@ import Foundation
 import OpenAI
 
 
-public enum OpenAIChatProviderError: Error {
+public enum OpenAIChatProviderError: LocalizedError {
     case invalidResponse
     case maxTokensExceeded
     case contentFilterException
@@ -19,7 +19,7 @@ public enum OpenAIChatProviderError: Error {
     case noFunctionMatch(String)
     case other(String)  // Generic error type for other unforeseen errors
     
-    public var localizedDescription: String {
+    public var errorDescription: String? {
         switch self {
         case .invalidResponse:
             return "Invalid response from API."
@@ -41,7 +41,7 @@ public enum OpenAIChatProviderError: Error {
     }
 }
 
-enum FunctionCallError: Error {
+public enum FunctionCallError: LocalizedError {
     case unableToPassParameters
     case requiredParametersNotSupplied
     case unableToParseCallResult
@@ -50,7 +50,7 @@ enum FunctionCallError: Error {
     //    case requiredParametersNotSupplied = "Required parameters not supplied"
     //    case unableToParseCallResult = "Unable to parse call result"
     
-    var errorDescription: String? {
+    public var errorDescription: String? {
         switch self {
         case .unableToPassParameters:
             "Unable to pass the parameters to the function"
