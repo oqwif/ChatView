@@ -76,35 +76,42 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     
     private func performChatGPTCall() {
         updateOnMain {
-            if let lastMessage = self.messages.last, !lastMessage.isReceiving {
-                return
-            }
+            // need to refactor this out. I don't like how it adding a temp message
             self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
+            self.newMessage = ""
         }
         Task {
             do {
-                let responseMessage = try await chatProvider.performChat(withMessages: messages)
-                guard let message = responseMessage as? MessageType else {
-                    fatalError("MessageType is incorrect")
-                }
+                let newMessages = try await self.handleCall(messages: self.messages)
                 updateOnMain {
-                    self.newMessage = ""
-                    self.messages[self.messages.count - 1] = message
-                    self.triggers?.forEach { trigger in
-                        if trigger.shouldActivate(forChatResponse: responseMessage.text) {
-                            trigger.activate()
+                    self.messages = newMessages
+                    if let lastMessage = newMessages.last {
+                        self.triggers?.forEach { trigger in
+                            if trigger.shouldActivate(forChatResponse: lastMessage.text) {
+                                trigger.activate()
+                            }
                         }
-                    }
-                    if message.role == .function {
-                        // If it is a function result, call GPT again so that it can see the result
-                        self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
-                        self.performChatGPTCall()
                     }
                 }
             } catch {
-                self.newMessage = ""
                 handleGPTError(error)
             }
+        }
+    }
+    
+    // can return multiple messages
+    private func handleCall(messages: [MessageType] = []) async throws -> [MessageType] {
+        var newMessages = messages.filter{!$0.isReceiving}
+        let responseMessage = try await chatProvider.performChat(withMessages: newMessages)
+        guard let message = responseMessage as? MessageType else {
+            fatalError("MessageType is incorrect")
+        }
+        newMessages.append(message)
+        if message.role == .function {
+            // If it is a function result, call GPT again so that it can see the result
+            return try await handleCall(messages: newMessages)
+        } else {
+            return newMessages
         }
     }
     
