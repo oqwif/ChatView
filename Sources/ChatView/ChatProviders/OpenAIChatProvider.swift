@@ -1,12 +1,13 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Jim Conroy on 25/9/2023.
 //
 
 import Foundation
 import OpenAI
+
 
 public enum OpenAIChatProviderError: Error {
     case invalidResponse
@@ -40,6 +41,57 @@ public enum OpenAIChatProviderError: Error {
     }
 }
 
+enum FunctionCallError: Error {
+    case unableToPassParameters
+    case requiredParametersNotSupplied
+    case unableToParseCallResult
+    case functionError(String)
+    //    case unableToPassParameters = "Unable to pass the parameters to the function"
+    //    case requiredParametersNotSupplied = "Required parameters not supplied"
+    //    case unableToParseCallResult = "Unable to parse call result"
+    
+    var errorDescription: String? {
+        switch self {
+        case .unableToPassParameters:
+            "Unable to pass the parameters to the function"
+        case .requiredParametersNotSupplied:
+            "Required parameters not supplied"
+        case .unableToParseCallResult:
+            "Unable to parse call result"
+        case .functionError(let message):
+            message
+        }
+    }
+}
+
+extension String {
+    func toJsonObject() -> [String: Any]? {
+        guard let data = self.data(using: .utf8) else {
+            return nil
+        }
+        return try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+    }
+}
+
+extension Dictionary where Key == String {
+    var jsonString: String? {
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: self, options: .prettyPrinted) else {
+            return nil
+        }
+        return String(data: jsonData, encoding: .utf8)
+    }
+    
+    func param(_ key: String) -> String? {
+        if let value = self[key] {
+            if let strValue = value as? String {
+                return strValue
+            } else {
+                return "\(value)"
+            }
+        }
+        return nil
+    }
+}
 
 public class OpenAIChatProvider: ChatProvider {
     let openAI: OpenAI
@@ -60,8 +112,9 @@ public class OpenAIChatProvider: ChatProvider {
     
     public func performChat(withMessages messages: [any Message]) async throws -> any Message {
         guard let messages = messages as? [OpenAIMessage] else {
-            fatalError("messages are not of type OpenAIMessage")
+            fatalError("Messages are not of type OpenAIMessage")
         }
+        
         let chats = messages.map { $0.chat }
         
         let query = ChatQuery(
@@ -83,48 +136,74 @@ public class OpenAIChatProvider: ChatProvider {
                 throw OpenAIChatProviderError.invalidResponse
             }
             
-            guard firstChoice.finishReason != "length" else {
+            switch firstChoice.finishReason {
+            case "length":
                 throw OpenAIChatProviderError.maxTokensExceeded
-            }
-            
-            guard firstChoice.finishReason != "content_filter" else {
+            case "content_filter":
                 throw OpenAIChatProviderError.contentFilterException
+            case "function_call":
+                return try await handleFunctionCall(firstChoice.message)
+            default:
+                return OpenAIMessage(chat: firstChoice.message)
             }
-            
-            var chat: Chat
-            if firstChoice.finishReason == "function_call" {
-                guard let functionName = firstChoice.message.functionCall?.name else {
-                    throw OpenAIChatProviderError.noFunctionNameSpecified
-                }
-                guard let arguments = firstChoice.message.functionCall?.arguments else {
-                    throw OpenAIChatProviderError.noArgumentsSpecified
-                }
-                guard let functions = self.functions else {
-                    throw OpenAIChatProviderError.noFunctionMatch(functionName)
-                }
-                
-                let functionMap = functions.reduce(into: [String: OpenAIFunction]()) { (result, function) in
-                    result[function.chatFunctionDeclaration.name] = function
-                }
-                
-                guard let function = functionMap[functionName] else {
-                    throw OpenAIChatProviderError.noFunctionMatch(functionName)
-                }
-                
-                let result = function.call(arguments: arguments)
-                chat = Chat(role: .function, content: result, name: functionName)
-            } else {
-                guard let chatResult = result.choices.first?.message else {
-                    throw OpenAIChatProviderError.noResponseMessageContent
-                }
-                
-                chat = chatResult
-            }
-
-            return OpenAIMessage(chat: chat)
         } catch {
             // Propagate the error to the caller.
             throw error
         }
     }
+    
+    private func handleFunctionCall(_ message: Chat) async throws -> OpenAIMessage {
+        guard let functionName = message.functionCall?.name else {
+            throw OpenAIChatProviderError.noFunctionNameSpecified
+        }
+        
+        guard let arguments = message.functionCall?.arguments else {
+            throw OpenAIChatProviderError.noArgumentsSpecified
+        }
+        
+        guard let functions = self.functions else {
+            throw OpenAIChatProviderError.noFunctionMatch(functionName)
+        }
+        
+        let function = try getFunction(from: functions, for: functionName)
+        
+        var result: String
+        do {
+            let functionResult = try await execute(function, with: arguments)
+            result = functionResult.jsonString ?? ["status": "success"].jsonString!
+        } catch {
+            result = ["status": "failed", "error": error.localizedDescription].jsonString!
+        }
+        let chat = Chat(role: .function, content: result, name: functionName)
+        return OpenAIMessage(chat: chat)
+    }
+    
+    private func getFunction(from functions: [OpenAIFunction], for name: String) throws -> OpenAIFunction {
+        let functionMap = functions.reduce(into: [String: OpenAIFunction]()) { (result, function) in
+            result[function.chatFunctionDeclaration.name] = function
+        }
+        
+        guard let function = functionMap[name] else {
+            throw OpenAIChatProviderError.noFunctionMatch(name)
+        }
+        return function
+    }
+    
+    private func execute(_ function: OpenAIFunction, with arguments: String) async throws -> [String:Any] {
+        guard let jsonObject = arguments.toJsonObject() else {
+            throw FunctionCallError.unableToPassParameters
+        }
+        
+        if let requiredParams = function.chatFunctionDeclaration.parameters.required,
+           requiredParams.filter({ jsonObject.param($0) == nil }).count > 0 {
+            throw FunctionCallError.requiredParametersNotSupplied
+        }
+        
+        do {
+            return try await function.call(parameters: jsonObject)
+        } catch {
+            throw FunctionCallError.functionError(error.localizedDescription)
+        }
+    }
 }
+

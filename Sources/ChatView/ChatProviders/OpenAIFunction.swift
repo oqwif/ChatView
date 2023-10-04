@@ -10,5 +10,5 @@ import OpenAI
 
 public protocol OpenAIFunction {
     var chatFunctionDeclaration: ChatFunctionDeclaration { get }
-    func call(arguments: String) -> String
+    func call(parameters: [String:Any]) async throws -> [String: Any]
 }
