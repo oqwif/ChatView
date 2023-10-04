@@ -73,14 +73,18 @@ extension String {
     }
 }
 
-extension Dictionary where Key == String {
+extension Dictionary where Key == String, Value: Encodable {
     var jsonString: String? {
-        guard let jsonData = try? JSONSerialization.data(withJSONObject: self, options: .prettyPrinted) else {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        guard let jsonData = try? encoder.encode(self) else {
             return nil
         }
         return String(data: jsonData, encoding: .utf8)
     }
+}
     
+extension Dictionary where Key == String {
     func param(_ key: String) -> String? {
         if let value = self[key] {
             if let strValue = value as? String {
