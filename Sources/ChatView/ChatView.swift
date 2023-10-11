@@ -54,14 +54,17 @@ public struct ChatView<MessageType: Message, Content: View>: View {
     
     private var messageInputField: some View {
         HStack {
-            TextField("Send a message", text: $viewModel.newMessage, axis: .vertical)
-                .textFieldStyle(.roundedBorder)
-                .lineLimit(5)
+            TextField("Send a message", text: $viewModel.newMessage, onCommit: {
+                viewModel.sendMessage()
+            })
+            .textFieldStyle(.roundedBorder)
+            .lineLimit(5)
             
             sendButton
         }
         .padding()
     }
+
     
     private var sendButton: some View {
         Button(action: viewModel.sendMessage) {
