@@ -108,7 +108,7 @@ extension Encodable {
     }
 }
 
-public class OpenAIChatProvider: ChatProvider {
+open class OpenAIChatProvider: ChatProvider {
     let openAI: OpenAI
     let temperature: OpenAIChatTemperature
     let model: String       // e.g. "gpt-3.5-turbo"
@@ -125,7 +125,7 @@ public class OpenAIChatProvider: ChatProvider {
         self.functions = functions
     }
     
-    public func performChat(withMessages messages: [any Message]) async throws -> any Message {
+    open func performChat(withMessages messages: [any Message]) async throws -> any Message {
         guard let messages = messages as? [OpenAIMessage] else {
             fatalError("Messages are not of type OpenAIMessage")
         }
