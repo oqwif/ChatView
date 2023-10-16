@@ -1,7 +1,7 @@
 //
 //  ChatViewModel.swift
 //
-//  Created by Jim Conroy on 5/9/2023.
+//  Created by Jamie Conroy on 5/9/2023.
 //
 
 import Foundation
@@ -11,6 +11,24 @@ enum ChatViewModelError: Error {
     case other(String)
 }
 
+/**
+ `ChatViewModel` is a class that acts as a view model for a chat interface. It uses generics to allow for different types of messages, provided they conform to the `Message` protocol. It is an `ObservableObject`, meaning that it can be observed for changes by SwiftUI views.
+
+ This class contains several `@Published` properties which will trigger UI updates when changed:
+ - `messages`: An array of messages of type `MessageType`.
+ - `newMessage`: A string representing a new message that the user has typed but not yet sent.
+ - `errorMessage`: A string representing any error messages that need to be displayed to the user.
+ - `isMessageViewTapped`: A boolean indicating whether the message view has been tapped.
+
+ The class also contains a `ChatProvider` instance, which is used to send and receive messages.
+
+ The class provides several public methods for interacting with the chat:
+ - `startChat()`: Starts the chat by calling the chat provider.
+ - `sendMessage()`: Sends a new message, provided the `newMessage` property is not empty.
+ - `add(message:)`: Adds a new message to the `messages` array and calls the chat provider.
+ - `retry()`: Retries sending the last message that resulted in an error.
+ - `resetChat(messages:)`: Resets the chat, optionally with a new set of messages.
+ */
 public class ChatViewModel<MessageType: Message>: ObservableObject {
     @Published var messages: [MessageType] = []
     @Published var newMessage: String = ""

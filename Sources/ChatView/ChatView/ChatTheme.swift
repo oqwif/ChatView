@@ -2,11 +2,30 @@
 //  File.swift
 //  
 //
-//  Created by Jim Conroy on 23/9/2023.
+//  Created by Jamie Conroy on 23/9/2023.
 //
 
 import SwiftUI
 
+/**
+ `ChatTheme` is a struct that encapsulates the appearance settings for a `ChatView`. It provides a way to customize the look and feel of the chat interface.
+
+ The struct contains several properties that determine the appearance of various elements of the chat interface:
+ - `userMessageBackgroundColor`: The background color of user messages.
+ - `characterMessageBackgroundColor`: The background color of character messages.
+ - `userMessageFont`: The font of user messages.
+ - `characterMessageFont`: The font of character messages.
+ - `userMessageTextColor`: The text color of user messages.
+ - `characterMessageTextColor`: The text color of character messages.
+ - `errorMessageFont`: The font of error messages.
+ - `retryButtonFont`: The font of the retry button.
+ - `retryButtonBackgroundColor`: The background color of the retry button.
+ - `retryButtonTextColor`: The text color of the retry button.
+ - `animatedEllipsisColor`: The color of the animated ellipsis.
+ - `animatedEllipsisSize`: The size of the animated ellipsis.
+
+ The struct provides an initializer that allows all of these properties to be set. If no values are provided, default values are used.
+ */
 public struct ChatTheme {
     public let userMessageBackgroundColor: Color
     public let characterMessageBackgroundColor: Color

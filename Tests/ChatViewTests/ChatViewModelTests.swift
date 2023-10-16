@@ -2,7 +2,7 @@
 //  ChatViewModelTests.swift
 //  
 //
-//  Created by Jim Conroy on 25/9/2023.
+//  Created by Jamie Conroy on 25/9/2023.
 //
 
 import XCTest

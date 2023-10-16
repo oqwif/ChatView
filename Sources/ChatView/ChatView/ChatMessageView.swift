@@ -1,7 +1,11 @@
 //
 //  MessageView.swift
+//  This file contains the definition of the MessageViewProtocol and the ChatMessageView struct.
+//  The ChatMessageView struct is a SwiftUI view that displays a chat message.
+//  It supports different types of messages (receiving, error, normal) and different roles (user, character).
+//  It also provides a retry button for error messages and a context menu for copying the message text.
 //
-//  Created by Jim Conroy on 1/9/2023.
+//  Created by Jamie Conroy on 1/9/2023.
 //
 
 import SwiftUI
@@ -11,21 +15,36 @@ import AppKit
 import UIKit
 #endif
 
+/// Protocol defining the required properties and initializer for a message view.
 public protocol MessageViewProtocol: View {
     init(message: any Message, theme: ChatTheme, retryAction: (() -> Void)?)
 }
 
+/**
+ `ChatMessageView` is a SwiftUI view that displays a chat message. It conforms to the `MessageViewProtocol`.
+
+ The view contains several properties:
+ - `message`: The message to be displayed.
+ - `theme`: The theme used for styling the chat.
+ - `retryAction`: An optional closure that is executed when the retry button is clicked in case of an error message.
+
+  */
 public struct ChatMessageView: MessageViewProtocol {
+    // Message to be displayed
     public var message: any Message
+    // Theme for styling the chat
     public var theme: ChatTheme
-    public var retryAction: (() -> Void)? // Retry action closure
+    // Optional retry action closure for error messages
+    public var retryAction: (() -> Void)?
     
+    /// Initializer
     public init(message: any Message, theme: ChatTheme, retryAction: (() -> Void)?) {
         self.message = message
         self.theme = theme
         self.retryAction = retryAction
     }
     
+    // View builder for the message content based on the message type
     @ViewBuilder
     var messageContent: some View {
         switch messageType {

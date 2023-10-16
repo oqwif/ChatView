@@ -91,7 +91,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 We welcome contributions, enhancements, and bug-fixes. Feel free to open an issue or create a pull request.
 
 ## Acknowledgements
-Created by Jim Conroy on 22/9/2023.
+Created by Jamie Conroy on 22/9/2023.
 
 This README is a quick start guide. For detailed documentation on each component and protocol, please refer to the inline documentation provided in each Swift file within the package.
 
