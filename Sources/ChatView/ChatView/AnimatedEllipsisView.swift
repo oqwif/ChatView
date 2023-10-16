@@ -28,17 +28,17 @@ class AnimatedEllipsisViewModel: ObservableObject {
     }
 }
 
-struct AnimatedEllipsisView: View {
+public struct AnimatedEllipsisView: View {
     var color: Color
     var size: CGFloat
     @StateObject private var viewModel = AnimatedEllipsisViewModel()
     
-    init(color: Color, size: CGFloat) {
+    public init(color: Color, size: CGFloat) {
         self.color = color
         self.size = size
     }
     
-    var body: some View {
+    public var body: some View {
         HStack(spacing: size / 2) {
             ForEach(0..<3) { index in
                 Circle()
