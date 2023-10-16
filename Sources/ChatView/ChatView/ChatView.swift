@@ -6,17 +6,15 @@
 
 import SwiftUI
 
-public struct ChatView<MessageType: Message, Content: View>: View {
+public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: View {
     @StateObject private var viewModel: ChatViewModel<MessageType>
     public let theme: ChatTheme
     
     @State private var showErrorAlert = false
-    private let content: (MessageType, ChatTheme, (() -> Void)?) -> Content
     
-    public init(viewModel: ChatViewModel<MessageType>, theme: ChatTheme? = nil, @ViewBuilder content: @escaping (MessageType, ChatTheme, (() -> Void)?) -> Content) {
+    public init(viewModel: ChatViewModel<MessageType>, theme: ChatTheme? = nil) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.theme = theme ?? ChatTheme()
-        self.content = content
     }
     
     public var body: some View {
@@ -42,7 +40,7 @@ public struct ChatView<MessageType: Message, Content: View>: View {
         ScrollViewReader { proxy in
             ScrollView {
                 ForEach(viewModel.messages.filter { $0.role != .system && $0.isHidden == false}) { message in
-                    content(message, theme, viewModel.retry)
+                    MessageView(message: message, theme: theme, retryAction: viewModel.retry)
                         .id(message.id)
                 }
             }
@@ -89,8 +87,8 @@ public struct ChatView<MessageType: Message, Content: View>: View {
     }
 }
 
-class MockChatProvider: ChatProvider {
-    func performChat(withMessages messages: [any Message]) async throws -> any Message {
+class MockChatProvider: ChatProvider<MockMessage> {
+    override func performChat(withMessages messages: [MockMessage]) async throws -> MockMessage {
         return MockMessage(text: "Assistant response", role: MessageRole.assistant)
     }
 }
@@ -101,8 +99,6 @@ struct ChatView_Previews: PreviewProvider {
         let viewModel = ChatViewModel<MockMessage>(chatProvider: MockChatProvider(),
                                       messages: mockMessages) // Pass sample messages here
 
-        return ChatView(viewModel: viewModel) { (message: MockMessage, theme, retryAction) in
-            MessageView(message: message, theme: theme, retryAction: retryAction)
-        }
+        ChatView<MockMessage, ChatMessageView>(viewModel: viewModel)
     }
 }

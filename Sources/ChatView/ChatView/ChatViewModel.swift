@@ -17,9 +17,9 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     @Published var errorMessage: String?
     @Published var isMessageViewTapped: Bool = false
     
-    private let chatProvider: any ChatProvider
+    private let chatProvider: ChatProvider<MessageType>
     
-    public init(chatProvider: any ChatProvider, messages: [MessageType] = []) {
+    public init(chatProvider: ChatProvider<MessageType>, messages: [MessageType] = []) {
             self.chatProvider = chatProvider
             self.messages = messages
     }
@@ -89,10 +89,8 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     // can return multiple messages
     private func handleCall(messages: [MessageType] = []) async throws -> [MessageType] {
         var newMessages = messages.filter{!$0.isReceiving}
-        let responseMessage = try await chatProvider.performChat(withMessages: newMessages)
-        guard let message = responseMessage as? MessageType else {
-            fatalError("MessageType is incorrect")
-        }
+        let message = try await chatProvider.performChat(withMessages: newMessages)
+
         newMessages.append(message)
         if message.role == .function {
             // If it is a function result, call GPT again so that it can see the result

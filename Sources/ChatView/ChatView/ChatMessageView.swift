@@ -11,7 +11,11 @@ import AppKit
 import UIKit
 #endif
 
-public struct MessageView: View {
+public protocol MessageViewProtocol: View {
+    init(message: any Message, theme: ChatTheme, retryAction: (() -> Void)?)
+}
+
+public struct ChatMessageView: MessageViewProtocol {
     public var message: any Message
     public var theme: ChatTheme
     public var retryAction: (() -> Void)? // Retry action closure
@@ -138,13 +142,13 @@ struct MessageView_Previews: PreviewProvider {
         
         VStack {
             ForEach(MockMessage.sampleMessages) { message in
-                MessageView(message: message, theme: theme, retryAction: nil)
+                ChatMessageView(message: message, theme: theme, retryAction: nil)
             }
         }
         
         VStack {
             ForEach(MockMessage.sampleMessages) { message in
-                MessageView(message: message, theme: ChatTheme(), retryAction: nil)
+                ChatMessageView(message: message, theme: ChatTheme(), retryAction: nil)
             }
         }
     }
