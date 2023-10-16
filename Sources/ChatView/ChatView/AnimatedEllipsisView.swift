@@ -7,12 +7,56 @@
 
 import SwiftUI
 
-struct SwiftUIView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+class AnimatedEllipsisViewModel: ObservableObject {
+    @Published var visibleDots = 0
+    var timer: Timer?
+
+    func startAnimating() {
+        timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
+            self.visibleDots = (self.visibleDots + 1) % 4
+        }
+    }
+
+    func stopAnimating() {
+        timer?.invalidate()
+        timer = nil
+    }
+
+    deinit {
+        stopAnimating()
     }
 }
 
+struct AnimatedEllipsisView: View {
+    var color: Color
+    var size: CGFloat
+    @StateObject private var viewModel = AnimatedEllipsisViewModel()
+    
+    init(color: Color, size: CGFloat) {
+        self.color = color
+        self.size = size
+    }
+    
+    var body: some View {
+        HStack(spacing: size / 2) {
+            ForEach(0..<3) { index in
+                Circle()
+                    .frame(width: size, height: size)
+                    .foregroundColor(color)
+                    .opacity(viewModel.visibleDots > index ? 1 : 0.3)
+            }
+        }
+        .onAppear {
+            viewModel.startAnimating()
+        }
+        .onDisappear {
+            viewModel.stopAnimating()
+        }
+    }
+}
+
+
 #Preview {
-    SwiftUIView()
+    AnimatedEllipsisView(color: .red, size: 5)
 }

@@ -8,10 +8,10 @@
 import XCTest
 @testable import ChatView
 
-class MockChatProvider: ChatProvider {
+class MockChatProvider: ChatProvider<MockMessage> {
     var shouldReturnError = false
     
-    func performChat(withMessages messages: [any Message]) async throws -> any Message {
+    override func performChat(withMessages messages: [MockMessage]) async throws -> MockMessage {
         if shouldReturnError {
             throw NSError(domain: "MockChatProvider", code: 1, userInfo: [NSLocalizedDescriptionKey: "Test Error"])
         }

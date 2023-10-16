@@ -27,7 +27,7 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     // MARK: - Public Methods
     
     func startChat() async {
-        performChatGPTCall()
+        callChatProvider()
     }
     
     func sendMessage() {
@@ -46,7 +46,7 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     
     public func add(message: MessageType) {
         messages.append(message)
-        performChatGPTCall()
+        callChatProvider()
     }
     
     func retry() {
@@ -54,7 +54,7 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
         if let index = messages.firstIndex(of: lastMessage) {
             messages.remove(at: index)
         }
-        performChatGPTCall()
+        callChatProvider()
     }
     
     public func resetChat(messages: [MessageType]? = nil) {
@@ -63,12 +63,12 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
         } else {
             self.messages.removeAll { $0.role != .system }
         }
-        performChatGPTCall()
+        callChatProvider()
     }
     
     // MARK: - Private Methods
     
-    private func performChatGPTCall() {
+    private func callChatProvider() {
         updateOnMain {
             // need to refactor this out. I don't like how it adding a temp message
             self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
@@ -76,31 +76,45 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
         }
         Task {
             do {
-                let newMessages = try await self.handleCall(messages: self.messages)
+                let newMessages = try await self.fetchChatResponsesUntilNonFunction(messages: self.messages)
                 updateOnMain {
                     self.messages = newMessages
                 }
             } catch {
-                handleGPTError(error)
+                handleChatProviderError(error)
             }
         }
     }
     
-    // can return multiple messages
-    private func handleCall(messages: [MessageType] = []) async throws -> [MessageType] {
+    /**
+     Fetches chat responses from the chat provider service until a non-function message is returned.
+     
+     - Parameters:
+        - messages: An array of `MessageType` representing the initial set of messages to be sent to the chat provider. Defaults to an empty array.
+     
+     - Returns:
+        An array of `MessageType` containing all the accumulated messages from the chat provider, including the non-function terminating message.
+     
+     - Throws:
+        Throws an error if the chatProvider's `performChat` function throws an error.
+     
+     - Note:
+        This function recursively sends messages and processes responses from the chat provider. If a response with a role of `.function` is received, the function will call itself again with the accumulated messages.
+    */
+    private func fetchChatResponsesUntilNonFunction(messages: [MessageType] = []) async throws -> [MessageType] {
         var newMessages = messages.filter{!$0.isReceiving}
         let message = try await chatProvider.performChat(withMessages: newMessages)
 
         newMessages.append(message)
         if message.role == .function {
             // If it is a function result, call GPT again so that it can see the result
-            return try await handleCall(messages: newMessages)
+            return try await fetchChatResponsesUntilNonFunction(messages: newMessages)
         } else {
             return newMessages
         }
     }
     
-    private func handleGPTError(_ error: Error) {
+    private func handleChatProviderError(_ error: Error) {
         updateOnMain {
             self.errorMessage = "An error occurred: \(error.localizedDescription)"
         }

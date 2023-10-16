@@ -7,6 +7,8 @@
 
 import Foundation
 
-public protocol ChatProvider {
-    func performChat(withMessages messages: [any Message]) async throws -> any Message
+open class ChatProvider<MessageType: Message> {
+    open func performChat(withMessages messages: [MessageType]) async throws -> MessageType {
+        fatalError("This method should be overridden")
+    }
 }

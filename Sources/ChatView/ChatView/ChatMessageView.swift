@@ -28,31 +28,53 @@ public struct ChatMessageView: MessageViewProtocol {
     
     @ViewBuilder
     var messageContent: some View {
-        if message.isReceiving {
+        switch messageType {
+        case .receiving:
             AnimatedEllipsisView(color: theme.animatedEllipsisColor, size: theme.animatedEllipsisSize)
-        } else if message.isError {
-            VStack {
-                Text(message.text)
-                    .font(theme.errorMessageFont)
-                Button(action: {
-                    retryAction?() // Call the retry action closure
-                }) {
-                    Text("Retry")
-                        .font(theme.retryButtonFont)
-                        .padding(4)
-                        .background(theme.retryButtonBackgroundColor)
-                        .foregroundColor(theme.retryButtonTextColor)
-                        .cornerRadius(4)
-                }
-            }
-        } else {
-            Text(message.text)
-                .font(message.role == .user ? theme.userMessageFont : theme.characterMessageFont)
-                .foregroundColor(message.role == .user ? theme.userMessageTextColor : theme.characterMessageTextColor)
+        case .error:
+            errorContent
+        case .normal(let role):
+            normalContent(for: role)
         }
     }
     
-    func copyTextToClipboard(text: String) {
+    private var errorContent: some View {
+        VStack {
+            Text(message.text).font(theme.errorMessageFont)
+            retryButton
+        }
+    }
+    
+    private var retryButton: some View {
+        Button(action: {
+            retryAction?()
+        }) {
+            Text("Retry")
+                .font(theme.retryButtonFont)
+                .padding(4)
+                .background(theme.retryButtonBackgroundColor)
+                .foregroundColor(theme.retryButtonTextColor)
+                .cornerRadius(4)
+        }
+    }
+    
+    private func normalContent(for role: MessageRole) -> some View {
+        Text(message.text)
+            .font(role == .user ? theme.userMessageFont : theme.characterMessageFont)
+            .foregroundColor(role == .user ? theme.userMessageTextColor : theme.characterMessageTextColor)
+    }
+    
+    private enum MessageType {
+        case receiving, error, normal(role: MessageRole)
+    }
+    
+    private var messageType: MessageType {
+        if message.isReceiving { return .receiving }
+        if message.isError { return .error }
+        return .normal(role: message.role)
+    }
+    
+    private func copyTextToClipboard(text: String) {
 #if os(macOS)
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
@@ -93,33 +115,6 @@ public struct ChatMessageView: MessageViewProtocol {
             }
         }
         .padding([.leading, .trailing, .top], 12.0)
-    }
-}
-
-public struct AnimatedEllipsisView: View {
-    public var color: Color
-    public var size: CGFloat
-    @State private var visibleDots = 0
-    
-    public init(color: Color, size: CGFloat) {
-        self.color = color
-        self.size = size
-    }
-    
-    public var body: some View {
-        HStack(spacing: size / 2) {
-            ForEach(0..<3) { index in
-                Circle()
-                    .frame(width: size, height: size)
-                    .foregroundColor(color)
-                    .opacity(visibleDots > index ? 1 : 0.3)
-            }
-        }
-        .onAppear {
-            Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
-                visibleDots = (visibleDots + 1) % 4
-            }
-        }
     }
 }
 
