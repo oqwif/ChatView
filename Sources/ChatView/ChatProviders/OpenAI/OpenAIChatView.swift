@@ -7,4 +7,4 @@
 
 import SwiftUI
 
-typealias OpenAIChatView = ChatView<OpenAIMessage, ChatMessageView>
+public typealias OpenAIChatView = ChatView<OpenAIMessage, ChatMessageView>
