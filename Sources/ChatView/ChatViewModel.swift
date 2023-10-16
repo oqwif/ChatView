@@ -17,15 +17,9 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     @Published var errorMessage: String?
     @Published var isMessageViewTapped: Bool = false
     
-    let triggers: [ChatResponseTrigger]?
-    
     private let chatProvider: any ChatProvider
     
-    public init(
-        chatProvider: any ChatProvider,
-        triggers: [ChatResponseTrigger]? = nil,
-        messages: [MessageType] = []) {
-            self.triggers = triggers
+    public init(chatProvider: any ChatProvider, messages: [MessageType] = []) {
             self.chatProvider = chatProvider
             self.messages = messages
     }
@@ -85,13 +79,6 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
                 let newMessages = try await self.handleCall(messages: self.messages)
                 updateOnMain {
                     self.messages = newMessages
-                    if let lastMessage = newMessages.last {
-                        self.triggers?.forEach { trigger in
-                            if trigger.shouldActivate(forChatResponse: lastMessage.text) {
-                                trigger.activate()
-                            }
-                        }
-                    }
                 }
             } catch {
                 handleGPTError(error)
