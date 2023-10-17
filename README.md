@@ -1,4 +1,7 @@
 # ChatView Swift Package
+---
+![Swift Workflow](https://github.com/oqwif/ChatView/actions/workflows/swift.yml/badge.svg)
+---
 `ChatView` is a robust and customizable SwiftUI package, facilitating the implementation of a sleek and user-friendly SwiftUI chat view with support for custom themes and the OpenAI chat API. 
 
 ## Installation
@@ -6,7 +9,7 @@
 Add the following dependency in your `Package.swift` file:
 
 ```swift
-.package(url: "https://github.com/oqwif/ChatView", from: "1.1.1")
+.package(url: "https://github.com/oqwif/ChatView.git", from: "1.1.1")
 ```
 
 Rather than rewrite all the OpenAI integration, ChatView depends on the awesome [MacPaw OpenAI](https://github.com/MacPaw/OpenAI) package. Xcode will add the dependency when ChatView is added.
