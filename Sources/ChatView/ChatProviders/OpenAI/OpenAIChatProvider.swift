@@ -76,13 +76,13 @@ public enum FunctionCallError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .unableToPassParameters:
-            "Unable to pass the parameters to the function"
+            return "Unable to pass the parameters to the function"
         case .requiredParametersNotSupplied:
-            "Required parameters not supplied"
+            return "Required parameters not supplied"
         case .unableToParseCallResult:
-            "Unable to parse call result"
+            return "Unable to parse call result"
         case .functionError(let message):
-            message
+            return message
         }
     }
 }
