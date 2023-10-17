@@ -19,4 +19,4 @@ jobs:
     - name: Select XCode
       run: sudo xcode-select -switch /Applications/Xcode.app && /usr/bin/xcodebuild -version
     - name: Run tests
-      run: xcodebuild test -scheme YOUR_PACKAGE_TARGET_NAME -destination 'platform=iOS Simulator,name=iPhone 14 Pro,OS=16.2' | xcpretty && exit ${PIPESTATUS[0]}
+      run: xcodebuild test -scheme ChatView -destination 'platform=iOS Simulator,name=iPhone 14 Pro,OS=16.2' | xcpretty && exit ${PIPESTATUS[0]}
