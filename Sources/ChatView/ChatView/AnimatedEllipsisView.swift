@@ -66,6 +66,10 @@ public struct AnimatedEllipsisView: View {
     }
 }
 
-#Preview {
-    AnimatedEllipsisView(color: .red, size: 5)
+struct AnimatedEllipsisView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            AnimatedEllipsisView(color: .red, size: 5)
+        }
+    }
 }
