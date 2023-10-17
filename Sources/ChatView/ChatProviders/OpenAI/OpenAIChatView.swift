@@ -8,3 +8,4 @@
 import SwiftUI
 
 public typealias OpenAIChatView = ChatView<OpenAIMessage, ChatMessageView>
+public typealias OpenAIChatViewModel = ChatViewModel<OpenAIMessage>

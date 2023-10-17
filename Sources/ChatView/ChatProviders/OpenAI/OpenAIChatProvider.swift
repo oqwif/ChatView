@@ -160,7 +160,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
     let userID: String?
     let functions: [OpenAIFunction]?
     
-    public init(openAI: OpenAI, temperature: OpenAIChatTemperature = .creativeWriting, model: String = "gpt-3.5-turbo", maxTokens: Int? = nil, userID: String? = nil, functions: [OpenAIFunction]? = nil) {
+    public init(openAI: OpenAI, temperature: OpenAIChatTemperature = .chatbotResponses, model: String = "gpt-3.5-turbo", maxTokens: Int? = nil, userID: String? = nil, functions: [OpenAIFunction]? = nil) {
         self.openAI = openAI
         self.temperature = temperature
         self.model = model

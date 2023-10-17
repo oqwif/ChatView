@@ -6,12 +6,16 @@
 Add the following dependency in your `Package.swift` file:
 
 ```swift
-.package(url: "https://github.com/oqwif/ChatView", from: "1.1.0")
+.package(url: "https://github.com/oqwif/ChatView", from: "1.1.1")
 ```
+
+Rather than rewrite all the OpenAI integration, ChatView depends on the awesome [MacPaw OpenAI](https://github.com/MacPaw/OpenAI) package. Xcode will add the dependency when ChatView is added.
 
 ## Components
 
 `ChatView` is the main SwiftUI view that provides a chat interface. It displays a list of messages and a text field for inputting new messages. The view uses generics to allow for different types of messages and message views, provided they conform to the `Message` and `MessageViewProtocol` protocols respectively.
+
+There are a couple of useful typealiases, `OpenAIChatView` and `OpenAIChatViewModel` specifcally for instantiating an OpenAIChatView. See the example below in Basic Usage.
 
 `ChatMessageView` is a SwiftUI view that displays a chat message. It supports different types of messages (receiving, error, normal) and different roles (user, character). It also provides a retry button for error messages and a context menu for copying the message text.
 
@@ -21,55 +25,39 @@ Add the following dependency in your `Package.swift` file:
 
 ## Basic Usage
 
-Here is a quick example of a ChatBot using the OpenAI API
+Here is a quick example of a ChatBot using the OpenAI API. Start a new Xcode project and replace the ContentView with the following. Fire up the project, enter your API key and enjoy your brief adventure with Isaac A!
 
 ```swift
 import SwiftUI
 import ChatView
 import OpenAI
 
-class MyChatProvider: OpenAIChatProvider {
+struct ContentView: View {
+    @State private var showingAlert = true
+    @State private var apiKey = ""
     
-    static let systemPrompt = """
-Imagine that you are Isaac Asimov. Start by introducing yourself and asking the user if they would like to do a short "choose your own" adventure.
+    private let systemPrompt = """
+Imagine that you are Isaac Asimov. Start by introducing yourself and asking the user if they would like to do a short "choose your own" space oddessey adventure.
 """
     
-    static public func getSystemMessage() async -> String {
-        return systemPrompt
-    }
-}
-
-struct AdventureChatView: View {
-    var chatViewModel: ChatViewModel<OpenAIMessage> {
-        let systemPrompt = MyChatProvider.systemPrompt    
-        let token = OpenAI(apiToken: "YOUR_TOKEN_HERE")    // Note: do not store your API token in code. This is an example only.
-        let chatProvider = AdventureChatProvider(
-            openAI: OpenAI(apiToken: token),
-            temperature: .chatbotResponses,
-            model: model,
-            maxTokens: 700,
-            functions: [
-                SendMessageToDeveloperFunction()
-            ]
-        )
-        return ChatViewModel<OpenAIMessage>(
-            chatProvider: chatProvider, messages: [OpenAIMessage(text: systemPrompt, role: .system)])
-    }
-    
     var body: some View {
-        OpenAIChatView(viewModel: chatViewModel)
-    }
-}
-
-@main
-struct AdventureChatApp: App {
-    var body: some Scene {
-        WindowGroup {
-            AdventureChatView()
+        if !apiKey.isEmpty {
+            OpenAIChatView(
+                viewModel: OpenAIChatViewModel(
+                    chatProvider: OpenAIChatProvider(openAI: OpenAI(apiToken: apiKey)),
+                    messages: [OpenAIMessage(text: systemPrompt, role: .system)]
+                ))
+        } else {
+            Text("")
+                .alert("Enter your OpenAI API key", isPresented: $showingAlert) {
+                    TextField("API Key", text: $apiKey)
+                    Button("OK", action: {})
+                } message: {
+                    Text("")
+                }
         }
     }
 }
-
 ```
 
 
@@ -90,15 +78,6 @@ let theme = ChatTheme(
 )
 let viewModel = ChatViewModel<MockMessage>(chatProvider: MockChatProvider(), messages: mockMessages)
 ChatView<MockMessage, ChatMessageView>(viewModel: viewModel, theme: theme)
-```
-
-You can also use `OpenAIChatProvider` to perform a chat using the OpenAI API:
-
-```swift
-let openAI = OpenAI(apiKey: "your-api-key")
-let openAIChatProvider = OpenAIChatProvider(openAI: openAI)
-let viewModel = ChatViewModel<OpenAIMessage>(chatProvider: openAIChatProvider)
-OpenAIChatView(viewModel: viewModel)
 ```
 
 ## Requirements

@@ -1,0 +1,623 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		EFFA686E2ADE2D0600020304 /* AdventureChatViewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFFA686D2ADE2D0600020304 /* AdventureChatViewApp.swift */; };
+		EFFA68702ADE2D0600020304 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFFA686F2ADE2D0600020304 /* ContentView.swift */; };
+		EFFA68722ADE2D0800020304 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EFFA68712ADE2D0800020304 /* Assets.xcassets */; };
+		EFFA68752ADE2D0800020304 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EFFA68742ADE2D0800020304 /* Preview Assets.xcassets */; };
+		EFFA687F2ADE2D0800020304 /* AdventureChatViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFFA687E2ADE2D0800020304 /* AdventureChatViewTests.swift */; };
+		EFFA68892ADE2D0800020304 /* AdventureChatViewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFFA68882ADE2D0800020304 /* AdventureChatViewUITests.swift */; };
+		EFFA688B2ADE2D0800020304 /* AdventureChatViewUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFFA688A2ADE2D0800020304 /* AdventureChatViewUITestsLaunchTests.swift */; };
+		EFFA68992ADE2D3F00020304 /* ChatView in Frameworks */ = {isa = PBXBuildFile; productRef = EFFA68982ADE2D3F00020304 /* ChatView */; };
+		EFFA689C2ADE2E1A00020304 /* ChatView in Frameworks */ = {isa = PBXBuildFile; productRef = EFFA689B2ADE2E1A00020304 /* ChatView */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EFFA687B2ADE2D0800020304 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EFFA68622ADE2D0600020304 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EFFA68692ADE2D0600020304;
+			remoteInfo = AdventureChatView;
+		};
+		EFFA68852ADE2D0800020304 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EFFA68622ADE2D0600020304 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EFFA68692ADE2D0600020304;
+			remoteInfo = AdventureChatView;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		EFFA686A2ADE2D0600020304 /* AdventureChatView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AdventureChatView.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		EFFA686D2ADE2D0600020304 /* AdventureChatViewApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdventureChatViewApp.swift; sourceTree = "<group>"; };
+		EFFA686F2ADE2D0600020304 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		EFFA68712ADE2D0800020304 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EFFA68742ADE2D0800020304 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		EFFA687A2ADE2D0800020304 /* AdventureChatViewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdventureChatViewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EFFA687E2ADE2D0800020304 /* AdventureChatViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdventureChatViewTests.swift; sourceTree = "<group>"; };
+		EFFA68842ADE2D0800020304 /* AdventureChatViewUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AdventureChatViewUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		EFFA68882ADE2D0800020304 /* AdventureChatViewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdventureChatViewUITests.swift; sourceTree = "<group>"; };
+		EFFA688A2ADE2D0800020304 /* AdventureChatViewUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdventureChatViewUITestsLaunchTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		EFFA68672ADE2D0600020304 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EFFA68992ADE2D3F00020304 /* ChatView in Frameworks */,
+				EFFA689C2ADE2E1A00020304 /* ChatView in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EFFA68772ADE2D0800020304 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EFFA68812ADE2D0800020304 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EFFA68612ADE2D0600020304 = {
+			isa = PBXGroup;
+			children = (
+				EFFA686C2ADE2D0600020304 /* AdventureChatView */,
+				EFFA687D2ADE2D0800020304 /* AdventureChatViewTests */,
+				EFFA68872ADE2D0800020304 /* AdventureChatViewUITests */,
+				EFFA686B2ADE2D0600020304 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		EFFA686B2ADE2D0600020304 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				EFFA686A2ADE2D0600020304 /* AdventureChatView.app */,
+				EFFA687A2ADE2D0800020304 /* AdventureChatViewTests.xctest */,
+				EFFA68842ADE2D0800020304 /* AdventureChatViewUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		EFFA686C2ADE2D0600020304 /* AdventureChatView */ = {
+			isa = PBXGroup;
+			children = (
+				EFFA686D2ADE2D0600020304 /* AdventureChatViewApp.swift */,
+				EFFA686F2ADE2D0600020304 /* ContentView.swift */,
+				EFFA68712ADE2D0800020304 /* Assets.xcassets */,
+				EFFA68732ADE2D0800020304 /* Preview Content */,
+			);
+			path = AdventureChatView;
+			sourceTree = "<group>";
+		};
+		EFFA68732ADE2D0800020304 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				EFFA68742ADE2D0800020304 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		EFFA687D2ADE2D0800020304 /* AdventureChatViewTests */ = {
+			isa = PBXGroup;
+			children = (
+				EFFA687E2ADE2D0800020304 /* AdventureChatViewTests.swift */,
+			);
+			path = AdventureChatViewTests;
+			sourceTree = "<group>";
+		};
+		EFFA68872ADE2D0800020304 /* AdventureChatViewUITests */ = {
+			isa = PBXGroup;
+			children = (
+				EFFA68882ADE2D0800020304 /* AdventureChatViewUITests.swift */,
+				EFFA688A2ADE2D0800020304 /* AdventureChatViewUITestsLaunchTests.swift */,
+			);
+			path = AdventureChatViewUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		EFFA68692ADE2D0600020304 /* AdventureChatView */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EFFA688E2ADE2D0800020304 /* Build configuration list for PBXNativeTarget "AdventureChatView" */;
+			buildPhases = (
+				EFFA68662ADE2D0600020304 /* Sources */,
+				EFFA68672ADE2D0600020304 /* Frameworks */,
+				EFFA68682ADE2D0600020304 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = AdventureChatView;
+			packageProductDependencies = (
+				EFFA68982ADE2D3F00020304 /* ChatView */,
+				EFFA689B2ADE2E1A00020304 /* ChatView */,
+			);
+			productName = AdventureChatView;
+			productReference = EFFA686A2ADE2D0600020304 /* AdventureChatView.app */;
+			productType = "com.apple.product-type.application";
+		};
+		EFFA68792ADE2D0800020304 /* AdventureChatViewTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EFFA68912ADE2D0800020304 /* Build configuration list for PBXNativeTarget "AdventureChatViewTests" */;
+			buildPhases = (
+				EFFA68762ADE2D0800020304 /* Sources */,
+				EFFA68772ADE2D0800020304 /* Frameworks */,
+				EFFA68782ADE2D0800020304 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EFFA687C2ADE2D0800020304 /* PBXTargetDependency */,
+			);
+			name = AdventureChatViewTests;
+			productName = AdventureChatViewTests;
+			productReference = EFFA687A2ADE2D0800020304 /* AdventureChatViewTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		EFFA68832ADE2D0800020304 /* AdventureChatViewUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EFFA68942ADE2D0800020304 /* Build configuration list for PBXNativeTarget "AdventureChatViewUITests" */;
+			buildPhases = (
+				EFFA68802ADE2D0800020304 /* Sources */,
+				EFFA68812ADE2D0800020304 /* Frameworks */,
+				EFFA68822ADE2D0800020304 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EFFA68862ADE2D0800020304 /* PBXTargetDependency */,
+			);
+			name = AdventureChatViewUITests;
+			productName = AdventureChatViewUITests;
+			productReference = EFFA68842ADE2D0800020304 /* AdventureChatViewUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EFFA68622ADE2D0600020304 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					EFFA68692ADE2D0600020304 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					EFFA68792ADE2D0800020304 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = EFFA68692ADE2D0600020304;
+					};
+					EFFA68832ADE2D0800020304 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = EFFA68692ADE2D0600020304;
+					};
+				};
+			};
+			buildConfigurationList = EFFA68652ADE2D0600020304 /* Build configuration list for PBXProject "AdventureChatView" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = EFFA68612ADE2D0600020304;
+			packageReferences = (
+				EFFA689A2ADE2E1A00020304 /* XCRemoteSwiftPackageReference "ChatView" */,
+			);
+			productRefGroup = EFFA686B2ADE2D0600020304 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EFFA68692ADE2D0600020304 /* AdventureChatView */,
+				EFFA68792ADE2D0800020304 /* AdventureChatViewTests */,
+				EFFA68832ADE2D0800020304 /* AdventureChatViewUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EFFA68682ADE2D0600020304 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EFFA68752ADE2D0800020304 /* Preview Assets.xcassets in Resources */,
+				EFFA68722ADE2D0800020304 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EFFA68782ADE2D0800020304 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EFFA68822ADE2D0800020304 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		EFFA68662ADE2D0600020304 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EFFA68702ADE2D0600020304 /* ContentView.swift in Sources */,
+				EFFA686E2ADE2D0600020304 /* AdventureChatViewApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EFFA68762ADE2D0800020304 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EFFA687F2ADE2D0800020304 /* AdventureChatViewTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EFFA68802ADE2D0800020304 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EFFA688B2ADE2D0800020304 /* AdventureChatViewUITestsLaunchTests.swift in Sources */,
+				EFFA68892ADE2D0800020304 /* AdventureChatViewUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EFFA687C2ADE2D0800020304 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EFFA68692ADE2D0600020304 /* AdventureChatView */;
+			targetProxy = EFFA687B2ADE2D0800020304 /* PBXContainerItemProxy */;
+		};
+		EFFA68862ADE2D0800020304 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EFFA68692ADE2D0600020304 /* AdventureChatView */;
+			targetProxy = EFFA68852ADE2D0800020304 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		EFFA688C2ADE2D0800020304 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		EFFA688D2ADE2D0800020304 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		EFFA688F2ADE2D0800020304 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"AdventureChatView/Preview Content\"";
+				DEVELOPMENT_TEAM = SEGH4KFS69;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giantbrainproject.AdventureChatView;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		EFFA68902ADE2D0800020304 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"AdventureChatView/Preview Content\"";
+				DEVELOPMENT_TEAM = SEGH4KFS69;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giantbrainproject.AdventureChatView;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EFFA68922ADE2D0800020304 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giantbrainproject.AdventureChatViewTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AdventureChatView.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AdventureChatView";
+			};
+			name = Debug;
+		};
+		EFFA68932ADE2D0800020304 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giantbrainproject.AdventureChatViewTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AdventureChatView.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AdventureChatView";
+			};
+			name = Release;
+		};
+		EFFA68952ADE2D0800020304 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giantbrainproject.AdventureChatViewUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = AdventureChatView;
+			};
+			name = Debug;
+		};
+		EFFA68962ADE2D0800020304 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.giantbrainproject.AdventureChatViewUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = AdventureChatView;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		EFFA68652ADE2D0600020304 /* Build configuration list for PBXProject "AdventureChatView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EFFA688C2ADE2D0800020304 /* Debug */,
+				EFFA688D2ADE2D0800020304 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EFFA688E2ADE2D0800020304 /* Build configuration list for PBXNativeTarget "AdventureChatView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EFFA688F2ADE2D0800020304 /* Debug */,
+				EFFA68902ADE2D0800020304 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EFFA68912ADE2D0800020304 /* Build configuration list for PBXNativeTarget "AdventureChatViewTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EFFA68922ADE2D0800020304 /* Debug */,
+				EFFA68932ADE2D0800020304 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EFFA68942ADE2D0800020304 /* Build configuration list for PBXNativeTarget "AdventureChatViewUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EFFA68952ADE2D0800020304 /* Debug */,
+				EFFA68962ADE2D0800020304 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EFFA689A2ADE2E1A00020304 /* XCRemoteSwiftPackageReference "ChatView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/oqwif/ChatView.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EFFA68982ADE2D3F00020304 /* ChatView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ChatView;
+		};
+		EFFA689B2ADE2E1A00020304 /* ChatView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EFFA689A2ADE2E1A00020304 /* XCRemoteSwiftPackageReference "ChatView" */;
+			productName = ChatView;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = EFFA68622ADE2D0600020304 /* Project object */;
+}
