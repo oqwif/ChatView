@@ -197,7 +197,10 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
             case "content_filter":
                 throw OpenAIChatProviderError.contentFilterException
             case "function_call":
-                return try await handleFunctionCall(firstChoice.message)
+                guard let functionCall = firstChoice.message.functionCall else {
+                    throw OpenAIChatProviderError.noFunctionNameSpecified
+                }
+                return try await handleFunctionCall(functionCall)
             default:
                 return OpenAIMessage(chat: firstChoice.message)
             }
@@ -207,12 +210,82 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
         }
     }
     
-    private func handleFunctionCall(_ message: Chat) async throws -> OpenAIMessage {
-        guard let functionName = message.functionCall?.name else {
+    open override func performStreamChat(withMessages messages: [OpenAIMessage]) -> AsyncThrowingStream<OpenAIMessage, Error> {
+        let chats = messages.map { $0.chat }
+        
+        let query = ChatQuery(
+            model: model,
+            messages: chats,
+            functions: functions?.map { $0.chatFunctionDeclaration },
+            functionCall: nil,
+            temperature: temperature.temperature,
+            maxTokens: maxTokens,
+            user: userID
+        )
+        return AsyncThrowingStream { continuation in
+            // Set up a Task to handle the stream
+            Task {
+                do {
+                    let id = UUID()
+                    var text = ""
+                    // Iterate over the values in the stream
+                    for try await result in self.openAI.chatsStream(query: query) {
+                        // Convert each ChatStreamResult to MessageType
+                        // Get the first choice from the response
+                        guard let firstChoice = result.choices.first else {
+                            throw OpenAIChatProviderError.invalidResponse
+                        }
+                        
+                        if let finishReason = firstChoice.finishReason {
+                            switch finishReason {
+                            case "length":
+                                throw OpenAIChatProviderError.maxTokensExceeded
+                            case "content_filter":
+                                throw OpenAIChatProviderError.contentFilterException
+                            case "function_call":
+                                guard let functionCall = firstChoice.delta.functionCall else {
+                                    throw OpenAIChatProviderError.noFunctionNameSpecified
+                                }
+                                let message = try await handleFunctionCall(functionCall)
+                                continuation.yield(message)
+                            default:
+                                break
+                            }
+                        } else {
+                            let delta = firstChoice.delta
+                            guard let content = delta.content else {
+                                throw OpenAIChatProviderError.noResponseMessageContent
+                            }
+                            text += content
+                            
+                            // Yield the MessageType
+                            continuation.yield(
+                                OpenAIMessage(
+                                    id: id,
+                                    text: text,
+                                    role: .assistant,
+                                    isReceiving: !content.isEmpty
+                                )
+                            )
+                        }
+                    }
+                    
+                    // If the loop exits normally, finish the continuation
+                    continuation.finish()
+                } catch {
+                    // If an error is thrown, finish the continuation with the error
+                    continuation.finish(throwing: error)
+                }
+            }
+        }
+    }
+    
+    private func handleFunctionCall(_ functionCall: ChatFunctionCall) async throws -> OpenAIMessage {
+        guard let functionName = functionCall.name else {
             throw OpenAIChatProviderError.noFunctionNameSpecified
         }
         
-        guard let arguments = message.functionCall?.arguments else {
+        guard let arguments = functionCall.arguments else {
             throw OpenAIChatProviderError.noArgumentsSpecified
         }
         

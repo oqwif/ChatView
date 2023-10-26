@@ -16,4 +16,7 @@ open class ChatProvider<MessageType: Message> {
     open func performChat(withMessages messages: [MessageType]) async throws -> MessageType {
         fatalError("This method should be overridden")
     }
+    open func performStreamChat(withMessages messages: [MessageType]) -> AsyncThrowingStream<MessageType, Error> {
+        fatalError("This method should be overridden")
+    }
 }

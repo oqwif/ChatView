@@ -36,10 +36,12 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     @Published var isMessageViewTapped: Bool = false
     
     private let chatProvider: ChatProvider<MessageType>
+    private let stream: Bool
     
-    public init(chatProvider: ChatProvider<MessageType>, messages: [MessageType] = []) {
-            self.chatProvider = chatProvider
-            self.messages = messages
+    public init(chatProvider: ChatProvider<MessageType>, messages: [MessageType] = [], stream: Bool = false) {
+        self.chatProvider = chatProvider
+        self.messages = messages
+        self.stream = stream
     }
     
     // MARK: - Public Methods
@@ -88,16 +90,20 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     
     private func callChatProvider() {
         updateOnMain {
-            // need to refactor this out. I don't like how it adding a temp message
             self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
             self.newMessage = ""
         }
         Task {
             do {
-                let newMessages = try await self.fetchChatResponsesUntilNonFunction(messages: self.messages)
-                updateOnMain {
-                    self.messages = newMessages
+                if(!stream) {
+                    let newMessages = try await self.fetchChatResponsesUntilNonFunction(messages: self.messages)
+                    updateOnMain {
+                        self.messages = newMessages
+                    }
+                } else {
+                    try await self.streamFetchChatResponses()
                 }
+                
             } catch {
                 handleChatProviderError(error)
             }
@@ -129,6 +135,22 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
             return try await fetchChatResponsesUntilNonFunction(messages: newMessages)
         } else {
             return newMessages
+        }
+    }
+    
+    private func streamFetchChatResponses() async throws {
+        var newMessages = messages.filter{!$0.isReceiving}
+        for try await newMessage in chatProvider.performStreamChat(withMessages: newMessages) {
+            if newMessage.role == .function {
+                newMessages.append(newMessage)
+                try await streamFetchChatResponses()
+            } else {
+                newMessages = newMessages.filter{!$0.isReceiving}
+                newMessages.append(newMessage)
+                updateOnMain {
+                    self.messages = newMessages
+                }
+            }
         }
     }
     

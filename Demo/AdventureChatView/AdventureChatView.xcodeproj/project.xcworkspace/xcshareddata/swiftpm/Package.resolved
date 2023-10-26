@@ -1,15 +1,6 @@
 {
   "pins" : [
     {
-      "identity" : "chatview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/oqwif/ChatView.git",
-      "state" : {
-        "revision" : "be2cfd5c62594e622b341c0da12bfce22cf241b0",
-        "version" : "1.1.0"
-      }
-    },
-    {
       "identity" : "openai",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/MacPaw/OpenAI.git",
