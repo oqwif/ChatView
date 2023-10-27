@@ -245,43 +245,41 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                     for try await result in self.openAI.chatsStream(query: query) {
                         // Convert each ChatStreamResult to MessageType
                         // Get the first choice from the response
-                        guard let firstChoice = result.choices.first else {
-                            throw OpenAIChatProviderError.invalidResponse
-                        }
-                        
-                        if let finishReason = firstChoice.finishReason {
-                            switch finishReason {
-                            case "length":
-                                throw OpenAIChatProviderError.maxTokensExceeded
-                            case "content_filter":
-                                throw OpenAIChatProviderError.contentFilterException
-                            case "function_call":
-                                break
-                            default:
-                                break
-                            }
-                        } else {
-                            let delta = firstChoice.delta
-                            
-                            if let functionCall = firstChoice.delta.functionCall {
-                                if let _ = functionCall.name {
-                                    let message = try await handleFunctionCall(functionCall)
-                                    continuation.yield(message)
+                        if let firstChoice = result.choices.first {
+                            if let finishReason = firstChoice.finishReason {
+                                switch finishReason {
+                                case "length":
+                                    throw OpenAIChatProviderError.maxTokensExceeded
+                                case "content_filter":
+                                    throw OpenAIChatProviderError.contentFilterException
+                                case "function_call":
+                                    break
+                                default:
+                                    break
                                 }
                             } else {
-                                guard let content = delta.content else {
-                                    throw OpenAIChatProviderError.noResponseMessageContent
-                                }
-                                text += content
+                                let delta = firstChoice.delta
                                 
-                                continuation.yield(
-                                    OpenAIMessage(
-                                        id: id,
-                                        text: text,
-                                        role: .assistant,
-                                        isReceiving: false
+                                if let functionCall = firstChoice.delta.functionCall {
+                                    if let _ = functionCall.name {
+                                        let message = try await handleFunctionCall(functionCall)
+                                        continuation.yield(message)
+                                    }
+                                } else {
+                                    guard let content = delta.content else {
+                                        throw OpenAIChatProviderError.noResponseMessageContent
+                                    }
+                                    text += content
+                                    
+                                    continuation.yield(
+                                        OpenAIMessage(
+                                            id: id,
+                                            text: text,
+                                            role: .assistant,
+                                            isReceiving: false
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }
