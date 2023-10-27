@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		EF9DE90A2AEB27090026FD56 /* ChatView in Frameworks */ = {isa = PBXBuildFile; productRef = EF9DE9092AEB27090026FD56 /* ChatView */; };
 		EF9DE90D2AEB2A5E0026FD56 /* ChatView in Frameworks */ = {isa = PBXBuildFile; productRef = EF9DE90C2AEB2A5E0026FD56 /* ChatView */; };
+		EF9DE9132AEB2D090026FD56 /* ChatView in Frameworks */ = {isa = PBXBuildFile; productRef = EF9DE9122AEB2D090026FD56 /* ChatView */; };
+		EF9DE9162AEB2DB80026FD56 /* ChatView in Frameworks */ = {isa = PBXBuildFile; productRef = EF9DE9152AEB2DB80026FD56 /* ChatView */; };
+		EF9DE9192AEB2DE60026FD56 /* ChatView in Frameworks */ = {isa = PBXBuildFile; productRef = EF9DE9182AEB2DE60026FD56 /* ChatView */; };
+		EF9DE91C2AEB2E1A0026FD56 /* ChatView in Frameworks */ = {isa = PBXBuildFile; productRef = EF9DE91B2AEB2E1A0026FD56 /* ChatView */; };
+		EF9DE91F2AEB2E9A0026FD56 /* ChatView in Frameworks */ = {isa = PBXBuildFile; productRef = EF9DE91E2AEB2E9A0026FD56 /* ChatView */; };
+		EF9DE9212AEB35260026FD56 /* TimeFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9DE9202AEB35260026FD56 /* TimeFunction.swift */; };
 		EFFA686E2ADE2D0600020304 /* AdventureChatViewApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFFA686D2ADE2D0600020304 /* AdventureChatViewApp.swift */; };
 		EFFA68702ADE2D0600020304 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFFA686F2ADE2D0600020304 /* ContentView.swift */; };
 		EFFA68722ADE2D0800020304 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EFFA68712ADE2D0800020304 /* Assets.xcassets */; };
@@ -36,6 +42,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		EF9DE9202AEB35260026FD56 /* TimeFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeFunction.swift; sourceTree = "<group>"; };
 		EFFA686A2ADE2D0600020304 /* AdventureChatView.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AdventureChatView.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFFA686D2ADE2D0600020304 /* AdventureChatViewApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdventureChatViewApp.swift; sourceTree = "<group>"; };
 		EFFA686F2ADE2D0600020304 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -54,7 +61,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				EF9DE90D2AEB2A5E0026FD56 /* ChatView in Frameworks */,
+				EF9DE91C2AEB2E1A0026FD56 /* ChatView in Frameworks */,
+				EF9DE9132AEB2D090026FD56 /* ChatView in Frameworks */,
+				EF9DE9192AEB2DE60026FD56 /* ChatView in Frameworks */,
 				EF9DE90A2AEB27090026FD56 /* ChatView in Frameworks */,
+				EF9DE91F2AEB2E9A0026FD56 /* ChatView in Frameworks */,
+				EF9DE9162AEB2DB80026FD56 /* ChatView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,6 +114,7 @@
 				EFFA686F2ADE2D0600020304 /* ContentView.swift */,
 				EFFA68712ADE2D0800020304 /* Assets.xcassets */,
 				EFFA68732ADE2D0800020304 /* Preview Content */,
+				EF9DE9202AEB35260026FD56 /* TimeFunction.swift */,
 			);
 			path = AdventureChatView;
 			sourceTree = "<group>";
@@ -150,6 +163,11 @@
 			packageProductDependencies = (
 				EF9DE9092AEB27090026FD56 /* ChatView */,
 				EF9DE90C2AEB2A5E0026FD56 /* ChatView */,
+				EF9DE9122AEB2D090026FD56 /* ChatView */,
+				EF9DE9152AEB2DB80026FD56 /* ChatView */,
+				EF9DE9182AEB2DE60026FD56 /* ChatView */,
+				EF9DE91B2AEB2E1A0026FD56 /* ChatView */,
+				EF9DE91E2AEB2E9A0026FD56 /* ChatView */,
 			);
 			productName = AdventureChatView;
 			productReference = EFFA686A2ADE2D0600020304 /* AdventureChatView.app */;
@@ -224,7 +242,7 @@
 			);
 			mainGroup = EFFA68612ADE2D0600020304;
 			packageReferences = (
-				EF9DE90B2AEB2A5E0026FD56 /* XCLocalSwiftPackageReference "../.." */,
+				EF9DE91D2AEB2E9A0026FD56 /* XCLocalSwiftPackageReference "../.." */,
 			);
 			productRefGroup = EFFA686B2ADE2D0600020304 /* Products */;
 			projectDirPath = "";
@@ -269,6 +287,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EFFA68702ADE2D0600020304 /* ContentView.swift in Sources */,
+				EF9DE9212AEB35260026FD56 /* TimeFunction.swift in Sources */,
 				EFFA686E2ADE2D0600020304 /* AdventureChatViewApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -597,7 +616,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		EF9DE90B2AEB2A5E0026FD56 /* XCLocalSwiftPackageReference "../.." */ = {
+		EF9DE91D2AEB2E9A0026FD56 /* XCLocalSwiftPackageReference "../.." */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../..;
 		};
@@ -609,6 +628,26 @@
 			productName = ChatView;
 		};
 		EF9DE90C2AEB2A5E0026FD56 /* ChatView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ChatView;
+		};
+		EF9DE9122AEB2D090026FD56 /* ChatView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ChatView;
+		};
+		EF9DE9152AEB2DB80026FD56 /* ChatView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ChatView;
+		};
+		EF9DE9182AEB2DE60026FD56 /* ChatView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ChatView;
+		};
+		EF9DE91B2AEB2E1A0026FD56 /* ChatView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ChatView;
+		};
+		EF9DE91E2AEB2E9A0026FD56 /* ChatView */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ChatView;
 		};

@@ -40,7 +40,7 @@ struct ContentView: View {
     @State private var apiKey = ""
     
     private let systemPrompt = """
-Imagine that you are Isaac Asimov. Start by introducing yourself and asking the user if they would like to do a short "choose your own" space oddessey adventure.
+Imagine that you are Isaac Asimov. Start by introducing yourself and asking the user if they would like to do a short "choose your own" space adventure.
 """
     
     var body: some View {

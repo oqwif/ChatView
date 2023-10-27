@@ -243,33 +243,35 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                             case "content_filter":
                                 throw OpenAIChatProviderError.contentFilterException
                             case "function_call":
-                                guard let functionCall = firstChoice.delta.functionCall else {
-                                    throw OpenAIChatProviderError.noFunctionNameSpecified
-                                }
-                                let message = try await handleFunctionCall(functionCall)
-                                continuation.yield(message)
+                                break
                             default:
                                 break
                             }
                         } else {
                             let delta = firstChoice.delta
-                            guard let content = delta.content else {
-                                throw OpenAIChatProviderError.noResponseMessageContent
-                            }
-                            text += content
                             
-                            // Yield the MessageType
-                            continuation.yield(
-                                OpenAIMessage(
-                                    id: id,
-                                    text: text,
-                                    role: .assistant,
-                                    isReceiving: !content.isEmpty
+                            if let functionCall = firstChoice.delta.functionCall {
+                                if let _ = functionCall.name {
+                                    let message = try await handleFunctionCall(functionCall)
+                                    continuation.yield(message)
+                                }
+                            } else {
+                                guard let content = delta.content else {
+                                    throw OpenAIChatProviderError.noResponseMessageContent
+                                }
+                                text += content
+                                
+                                continuation.yield(
+                                    OpenAIMessage(
+                                        id: id,
+                                        text: text,
+                                        role: .assistant,
+                                        isReceiving: false
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
-                    
                     // If the loop exits normally, finish the continuation
                     continuation.finish()
                 } catch {
@@ -284,7 +286,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
         guard let functionName = functionCall.name else {
             throw OpenAIChatProviderError.noFunctionNameSpecified
         }
-        
+
         guard let arguments = functionCall.arguments else {
             throw OpenAIChatProviderError.noArgumentsSpecified
         }
@@ -319,9 +321,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
     }
     
     private func execute(_ function: OpenAIFunction, with arguments: String) async throws -> Encodable {
-        guard let jsonObject = arguments.toJsonObject() else {
-            throw FunctionCallError.unableToPassParameters
-        }
+        let jsonObject = arguments.toJsonObject() ?? [:]
         
         if let requiredParams = function.chatFunctionDeclaration.parameters.required,
            requiredParams.count > 0 && requiredParams.filter({ jsonObject.param($0) == nil }).count > 0 {

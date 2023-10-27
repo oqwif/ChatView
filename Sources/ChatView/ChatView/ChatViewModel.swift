@@ -105,6 +105,9 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
                 }
                 
             } catch {
+                updateOnMain {
+                    self.messages = self.messages.filter { !$0.isReceiving }
+                }
                 handleChatProviderError(error)
             }
         }
@@ -139,16 +142,16 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     }
     
     private func streamFetchChatResponses() async throws {
-        var newMessages = messages.filter{!$0.isReceiving}
-        for try await newMessage in chatProvider.performStreamChat(withMessages: newMessages) {
+        for try await newMessage in chatProvider.performStreamChat(withMessages: messages.filter{!$0.isReceiving}) {
             if newMessage.role == .function {
-                newMessages.append(newMessage)
+                DispatchQueue.main.sync {
+                    self.messages[self.messages.count-1] = newMessage
+                    self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
+                }
                 try await streamFetchChatResponses()
             } else {
-                newMessages = newMessages.filter{!$0.isReceiving}
-                newMessages.append(newMessage)
                 updateOnMain {
-                    self.messages = newMessages
+                    self.messages[self.messages.count-1] = newMessage
                 }
             }
         }
