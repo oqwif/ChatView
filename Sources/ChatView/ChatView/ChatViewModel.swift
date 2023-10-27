@@ -6,9 +6,24 @@
 
 import Foundation
 
-enum ChatViewModelError: Error {
+enum ChatViewModelError: LocalizedError {
     case notConnected
+    case functionStreamError(String)
+    case streamError(String)
     case other(String)
+    
+    public var errorDescription: String? {
+        switch self {
+        case .notConnected:
+            return "ChatViewModelError: Not connected"
+        case .functionStreamError(let message):
+            return "ChatViewModelError: Function stream error: \(message)"
+        case .streamError(let message):
+            return "ChatViewModelError: Stream error: \(message)"
+        case .other(let message):
+            return "ChatViewModelError: \(message)"
+        }
+    }
 }
 
 /**
@@ -146,18 +161,27 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     }
     
     private func streamFetchChatResponses() async throws {
-        for try await newMessage in chatProvider.performStreamChat(withMessages: messages.filter{!$0.isReceiving}) {
-            if newMessage.role == .function {
-                DispatchQueue.main.sync {
-                    self.messages[self.messages.count-1] = newMessage
-                    self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
-                }
-                try await streamFetchChatResponses()
-            } else {
-                updateOnMain {
-                    self.messages[self.messages.count-1] = newMessage
+        do {
+            for try await newMessage in chatProvider.performStreamChat(withMessages: messages.filter{!$0.isReceiving}) {
+                if newMessage.role == .function {
+                    do {
+                        DispatchQueue.main.sync {
+                        self.messages[self.messages.count-1] = newMessage
+                        self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
+                    }
+                        try await streamFetchChatResponses()
+                    }
+                    catch {
+                        throw ChatViewModelError.streamError(error.localizedDescription)
+                    }
+                } else {
+                    updateOnMain {
+                        self.messages[self.messages.count-1] = newMessage
+                    }
                 }
             }
+        } catch {
+            throw ChatViewModelError.streamError(error.localizedDescription)
         }
     }
     
