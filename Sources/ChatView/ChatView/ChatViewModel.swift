@@ -163,7 +163,8 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     
     private func handleChatProviderError(_ error: Error) {
         updateOnMain {
-            self.errorMessage = "An error occurred: \(error.localizedDescription)"
+            let localizedDescription = error.localizedDescription
+            self.errorMessage = "An error occurred: \(localizedDescription)"
         }
     }
     
