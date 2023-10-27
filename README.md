@@ -2,7 +2,7 @@
 ---
 ![Swift Workflow](https://github.com/oqwif/ChatView/actions/workflows/swift.yml/badge.svg)
 ---
-`ChatView` is a robust and customizable SwiftUI package, facilitating the implementation of a sleek and user-friendly SwiftUI chat view with support for custom themes and the OpenAI chat API. 
+`ChatView` provides a SwiftUI chat view for the OpenAI chat API. Easily incorporate into your own chat-based apps. It also supports OpenAI Functions (see Demo for an example). 
 
 ## Installation
 

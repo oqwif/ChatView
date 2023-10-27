@@ -112,9 +112,9 @@
 			children = (
 				EFFA686D2ADE2D0600020304 /* AdventureChatViewApp.swift */,
 				EFFA686F2ADE2D0600020304 /* ContentView.swift */,
+				EF9DE9202AEB35260026FD56 /* TimeFunction.swift */,
 				EFFA68712ADE2D0800020304 /* Assets.xcassets */,
 				EFFA68732ADE2D0800020304 /* Preview Content */,
-				EF9DE9202AEB35260026FD56 /* TimeFunction.swift */,
 			);
 			path = AdventureChatView;
 			sourceTree = "<group>";

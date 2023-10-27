@@ -21,15 +21,19 @@ Imagine that you are Isaac Asimov. Start by introducing yourself and asking the 
     
     var body: some View {
         if !apiKey.isEmpty {
-            OpenAIChatView(
-                viewModel: OpenAIChatViewModel(
-                    chatProvider: OpenAIChatProvider(
-                        openAI: OpenAI(apiToken: apiKey),
-                        functions: [GetCurrentDateAndTimeFunction()]
-                    ),
-                    messages: [OpenAIMessage(text: systemPrompt, role: .system)],
-                    stream: true
-                ))
+            let chatViewModel = OpenAIChatViewModel(
+                chatProvider: OpenAIChatProvider(
+                    openAI: OpenAI(apiToken: apiKey),
+                    functions: [GetCurrentDateAndTimeFunction()]
+                ),
+                messages: [OpenAIMessage(text: systemPrompt, role: .system)],
+                stream: true
+            )
+            
+            OpenAIChatView(viewModel: chatViewModel)
+            .task {
+                await chatViewModel.startChat()
+            }
         } else {
             Text("")
                 .alert("Enter your OpenAI API key", isPresented: $showingAlert) {
