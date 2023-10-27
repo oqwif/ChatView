@@ -141,6 +141,7 @@ extension Encodable {
  - `maxTokens`: The maximum number of tokens that the chat can use.
  - `userID`: The user ID for the chat.
  - `functions`: An array of `OpenAIFunction` that can be called during the chat.
+ - `systemMessageProvider`: Use one of these if you would like to update the system message before every call to OpenAI. Useful for inserting the time, date, etc.
 
  The class provides an initializer that allows all of these properties to be set.
 
@@ -159,17 +160,28 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
     let maxTokens: Int?
     let userID: String?
     let functions: [OpenAIFunction]?
+    let systemMessageProvider: OpenAISystemMessageProvider?
     
-    public init(openAI: OpenAI, temperature: OpenAIChatTemperature = .chatbotResponses, model: String = "gpt-3.5-turbo", maxTokens: Int? = nil, userID: String? = nil, functions: [OpenAIFunction]? = nil) {
+    public init(
+        openAI: OpenAI,
+        temperature: OpenAIChatTemperature = .chatbotResponses,
+        model: String = "gpt-3.5-turbo",
+        maxTokens: Int? = nil,
+        userID: String? = nil,
+        functions: [OpenAIFunction]? = nil,
+        systemMessageProvider: OpenAISystemMessageProvider? = nil
+    ) {
         self.openAI = openAI
         self.temperature = temperature
         self.model = model
         self.maxTokens = maxTokens
         self.userID = userID
         self.functions = functions
+        self.systemMessageProvider = systemMessageProvider
     }
     
     open override func performChat(withMessages messages: [OpenAIMessage]) async throws -> OpenAIMessage {
+        let messages = updateSystemMessage(withMessages: messages)
         let chats = messages.map { $0.chat }
         
         let query = ChatQuery(
@@ -211,6 +223,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
     }
     
     open override func performStreamChat(withMessages messages: [OpenAIMessage]) -> AsyncThrowingStream<OpenAIMessage, Error> {
+        let messages = updateSystemMessage(withMessages: messages)
         let chats = messages.map { $0.chat }
         
         let query = ChatQuery(
@@ -280,6 +293,21 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                 }
             }
         }
+    }
+    
+    private func updateSystemMessage(withMessages messages: [OpenAIMessage]) -> [OpenAIMessage] {
+        guard let systemMessageProvider = systemMessageProvider else {
+            return messages
+        }
+        let newSystemMessage = OpenAIMessage(text: systemMessageProvider.systemMessage, role: .system)
+        var newMessages = messages
+        
+        if let systemMessage = messages.first, systemMessage.role == .system {
+            newMessages = Array(newMessages.dropFirst())
+        }
+        newMessages.insert(newSystemMessage, at: 0)
+
+        return newMessages
     }
     
     private func handleFunctionCall(_ functionCall: ChatFunctionCall) async throws -> OpenAIMessage {

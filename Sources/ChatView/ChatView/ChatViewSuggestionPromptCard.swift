@@ -43,10 +43,12 @@ struct ChatViewSuggestionPromptCard: View {
     }
 }
 
-#Preview {
-    ChatViewSuggestionPromptCard(
-    prompt: ChatViewSuggestionPrompt(
-        title: "What are the top three tasks",
-        body: "that I should focus on?",
-        prompt: "What are the top three tasks that I should focus on?"))
+struct ChatViewSuggestionPromptCard_Previews: PreviewProvider {
+    static var previews: some View {
+        ChatViewSuggestionPromptCard(
+            prompt: ChatViewSuggestionPrompt(
+                title: "What are the top three tasks",
+                body: "that I should focus on?",
+                prompt: "What are the top three tasks that I should focus on?"))
+    }
 }
