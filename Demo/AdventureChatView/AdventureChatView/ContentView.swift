@@ -30,6 +30,7 @@ Imagine that you are Isaac Asimov. Start by introducing yourself and asking the 
                 stream: true
             )
             
+
             OpenAIChatView(
                 viewModel: chatViewModel
             )
