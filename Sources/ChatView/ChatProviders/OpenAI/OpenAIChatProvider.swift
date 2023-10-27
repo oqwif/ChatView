@@ -225,7 +225,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                 return OpenAIMessage(chat: firstChoice.message)
             }
         } catch {
-            // Propagate the error to the caller.
+            // Propagate the error to the caller
             throw error
         }
     }
@@ -287,7 +287,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                                         functionName = name
                                     }
                                     if let arguments = functionCall.arguments {
-                                        functionArguments = arguments
+                                        functionArguments = "\(functionArguments ?? "")\(arguments)"
                                     }
                                 } else {
                                     guard let content = delta.content else {
