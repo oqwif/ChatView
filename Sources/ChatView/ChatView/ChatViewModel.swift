@@ -34,6 +34,7 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     @Published var newMessage: String = ""
     @Published var errorMessage: String?
     @Published var isMessageViewTapped: Bool = false
+    @Published var chatStarted: Bool = false
     
     private let chatProvider: ChatProvider<MessageType>
     private let stream: Bool
@@ -46,12 +47,14 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     
     // MARK: - Public Methods
     
-    func startChat() async {
+    public func startChat() async {
+        chatStarted = true
         callChatProvider()
     }
     
     func sendMessage() {
         guard !newMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
+        
         let userMessage = MessageType(
             id: UUID(),  // Provide a unique ID here
             text: newMessage,
@@ -65,6 +68,7 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     }
     
     public func add(message: MessageType) {
+        chatStarted = true
         messages.append(message)
         callChatProvider()
     }
@@ -78,12 +82,12 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     }
     
     public func resetChat(messages: [MessageType]? = nil) {
+        chatStarted = false
         if let messages = messages {
             self.messages = messages
         } else {
             self.messages.removeAll { $0.role != .system }
         }
-        callChatProvider()
     }
     
     // MARK: - Private Methods

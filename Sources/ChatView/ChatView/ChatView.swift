@@ -24,25 +24,30 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
     // The theme for this chat view.
     public let theme: ChatTheme
     
+    public let suggestionPrompts: [ChatViewSuggestionPrompt]?
+    
     // A state variable that determines whether an error alert should be shown.
     @State private var showErrorAlert = false
     
     /// Initializes a new chat view with the given view model and theme.
-    public init(viewModel: ChatViewModel<MessageType>, theme: ChatTheme? = nil) {
+    public init(viewModel: ChatViewModel<MessageType>, 
+                theme: ChatTheme? = nil,
+                suggestionPrompts: [ChatViewSuggestionPrompt]? = nil) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.theme = theme ?? ChatTheme()
+        self.suggestionPrompts = suggestionPrompts
     }
     
     public var body: some View {
         ZStack {
             VStack {
                 chatList
+                if(self.suggestionPrompts != nil && !viewModel.chatStarted) {
+                    suggestionPromptsView
+                }
                 messageInputField
             }
             .blur(radius: viewModel.isMessageViewTapped ? 5.0 : 0)
-        }
-        .task {
-            await viewModel.startChat()
         }
         .alert(isPresented: $showErrorAlert) {
             errorAlert
@@ -64,6 +69,28 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
                 scrollToLastMessage(in: proxy)
             }
         }
+    }
+    
+    private var suggestionPromptsView: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(suggestionPrompts ?? []) { prompt in
+                    ChatViewSuggestionPromptCard(prompt: prompt, theme: theme)
+                        .onTapGesture {
+                            // Handle the tap here
+                            // You can call a method and pass the prompt as a parameter
+                            handleSuggestionPromptTap(prompt: prompt.prompt)
+                        }
+                } 
+            }
+            .padding(.horizontal)
+        }
+        .padding(.vertical, 5)
+    }
+    
+    private func handleSuggestionPromptTap(prompt: String) {
+        viewModel.newMessage = prompt
+        viewModel.sendMessage()
     }
     
     private var messageInputField: some View {
@@ -103,6 +130,8 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
     }
 }
 
+
+
 /// A mock provider for chat messages. This class is used for testing purposes.
 class MockChatProvider: ChatProvider<MockMessage> {
     /// Performs a chat with the given messages and returns a mock response.
@@ -117,6 +146,12 @@ struct ChatView_Previews: PreviewProvider {
         let viewModel = ChatViewModel<MockMessage>(chatProvider: MockChatProvider(),
                                       messages: mockMessages) // Pass sample messages here
 
-        ChatView<MockMessage, ChatMessageView>(viewModel: viewModel)
+        ChatView<MockMessage, ChatMessageView>(
+            viewModel: viewModel,
+            suggestionPrompts: [ChatViewSuggestionPrompt(
+                title: "What are the top three tasks",
+                body: "that I should focus on?",
+                prompt: "What are the top three tasks that I should focus on?")]
+        )
     }
 }
