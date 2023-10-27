@@ -225,7 +225,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                 return OpenAIMessage(chat: firstChoice.message)
             }
         } catch {
-            // Propagate the error to the caller.
+            // Propagate the error to the caller
             throw error
         }
     }
