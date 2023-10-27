@@ -212,7 +212,15 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                 guard let functionCall = firstChoice.message.functionCall else {
                     throw OpenAIChatProviderError.noFunctionNameSpecified
                 }
-                return try await handleFunctionCall(functionCall)
+                guard let functionName = functionCall.name else {
+                    throw OpenAIChatProviderError.noFunctionNameSpecified
+                }
+
+                guard let functionArguments = functionCall.arguments else {
+                    throw OpenAIChatProviderError.noArgumentsSpecified
+                }
+                
+                return try await handleFunctionCall(functionName, arguments: functionArguments)
             default:
                 return OpenAIMessage(chat: firstChoice.message)
             }
@@ -241,6 +249,9 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                 do {
                     let id = UUID()
                     var text = ""
+                    var functionName: String?
+                    var functionArguments: String?
+                    
                     // Iterate over the values in the stream
                     for try await result in self.openAI.chatsStream(query: query) {
                         // Convert each ChatStreamResult to MessageType
@@ -253,6 +264,17 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                                 case "content_filter":
                                     throw OpenAIChatProviderError.contentFilterException
                                 case "function_call":
+                                    guard let functionName = functionName else {
+                                        throw OpenAIChatProviderError.noFunctionNameSpecified
+                                    }
+
+                                    guard let functionArguments = functionArguments else {
+                                        throw OpenAIChatProviderError.noArgumentsSpecified
+                                    }
+
+                                    let message = try await handleFunctionCall(functionName, arguments: functionArguments)
+                                    continuation.yield(message)
+                                    
                                     break
                                 default:
                                     break
@@ -261,9 +283,11 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                                 let delta = firstChoice.delta
                                 
                                 if let functionCall = firstChoice.delta.functionCall {
-                                    if let _ = functionCall.name {
-                                        let message = try await handleFunctionCall(functionCall)
-                                        continuation.yield(message)
+                                    if let name = functionCall.name {
+                                        functionName = name
+                                    }
+                                    if let arguments = functionCall.arguments {
+                                        functionArguments = arguments
                                     }
                                 } else {
                                     guard let content = delta.content else {
@@ -308,15 +332,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
         return newMessages
     }
     
-    private func handleFunctionCall(_ functionCall: ChatFunctionCall) async throws -> OpenAIMessage {
-        guard let functionName = functionCall.name else {
-            throw OpenAIChatProviderError.noFunctionNameSpecified
-        }
-
-        guard let arguments = functionCall.arguments else {
-            throw OpenAIChatProviderError.noArgumentsSpecified
-        }
-        
+    private func handleFunctionCall(_ functionName: String, arguments: String) async throws -> OpenAIMessage {
         guard let functions = self.functions else {
             throw OpenAIChatProviderError.noFunctionMatch(functionName)
         }
