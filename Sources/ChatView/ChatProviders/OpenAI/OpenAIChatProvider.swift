@@ -252,7 +252,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                     var functionName: String?
                     var functionArguments: String?
                     
-                    // Iterate over the values in the stream
+                    // Iterate over the values in the stream.
                     for try await result in self.openAI.chatsStream(query: query) {
                         // Convert each ChatStreamResult to MessageType
                         // Get the first choice from the response
