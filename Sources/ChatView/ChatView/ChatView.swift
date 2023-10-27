@@ -50,7 +50,11 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
             .blur(radius: viewModel.isMessageViewTapped ? 5.0 : 0)
         }
         .alert(isPresented: $showErrorAlert) {
-            errorAlert
+            Alert(
+                title: Text("Error"),
+                message: Text(viewModel.errorMessage ?? "Unknown error"),
+                dismissButton: .default(Text("OK"))
+            )
         }
         .onChange(of: viewModel.errorMessage) { newValue in
             showErrorAlert = newValue != nil
@@ -111,14 +115,6 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
         Button(action: viewModel.sendMessage) {
             Image(systemName: "paperplane.fill")
         }
-    }
-    
-    private var errorAlert: Alert {
-        Alert(
-            title: Text("Error"),
-            message: Text(viewModel.errorMessage ?? "Unknown error"),
-            dismissButton: .default(Text("OK"))
-        )
     }
     
     private func scrollToLastMessage(in proxy: ScrollViewProxy) {

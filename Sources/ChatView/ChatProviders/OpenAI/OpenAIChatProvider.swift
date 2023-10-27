@@ -290,19 +290,18 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                                         functionArguments = "\(functionArguments ?? "")\(arguments)"
                                     }
                                 } else {
-                                    guard let content = delta.content else {
-                                        throw OpenAIChatProviderError.noResponseMessageContent
-                                    }
-                                    text += content
-                                    
-                                    continuation.yield(
-                                        OpenAIMessage(
-                                            id: id,
-                                            text: text,
-                                            role: .assistant,
-                                            isReceiving: false
+                                    if let content = delta.content {
+                                        text += content
+                                        
+                                        continuation.yield(
+                                            OpenAIMessage(
+                                                id: id,
+                                                text: text,
+                                                role: .assistant,
+                                                isReceiving: false
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
                         }
