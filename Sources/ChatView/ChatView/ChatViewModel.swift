@@ -26,6 +26,28 @@ enum ChatViewModelError: LocalizedError {
     }
 }
 
+actor Debouncer {
+    private var workItem: Task<Void, Never>?
+    private let delay: TimeInterval
+    
+    init(delay: TimeInterval) {
+        self.delay = delay
+    }
+    
+    func debounce(_ block: @escaping () async throws -> Void) {
+        workItem?.cancel()
+        workItem = Task {
+            do {
+                try await Task.sleep(nanoseconds: UInt64(self.delay * 1_000_000_000))
+                try await block()
+            } catch {
+                // Handle error if needed
+                print("Error: \(error)")
+            }
+        }
+    }
+}
+
 /**
  `ChatViewModel` is a class that acts as a view model for a chat interface. It uses generics to allow for different types of messages, provided they conform to the `Message` protocol. It is an `ObservableObject`, meaning that it can be observed for changes by SwiftUI views.
 
@@ -53,6 +75,8 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     
     private let chatProvider: ChatProvider<MessageType>
     private let stream: Bool
+    
+    private let debouncer: Debouncer = Debouncer(delay: 0.075)  // 75 ms delay
     
     public init(chatProvider: ChatProvider<MessageType>, messages: [MessageType] = [], stream: Bool = false) {
         self.chatProvider = chatProvider
@@ -165,20 +189,23 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     private func streamFetchChatResponses() async throws {
         do {
             for try await newMessage in chatProvider.performStreamChat(withMessages: messages.filter{!$0.isReceiving}) {
-                if newMessage.role == .function {
-                    do {
-                        DispatchQueue.main.sync {
-                        self.messages[self.messages.count-1] = newMessage
-                        self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
-                    }
-                        try await streamFetchChatResponses()
-                    }
-                    catch {
-                        throw ChatViewModelError.streamError(error.localizedDescription)
-                    }
-                } else {
-                    updateOnMain {
-                        self.messages[self.messages.count-1] = newMessage
+                await debouncer.debounce { [weak self] in
+                    guard let self = self else { return }
+                    if newMessage.role == .function {
+                        do {
+                            DispatchQueue.main.sync {
+                                self.messages[self.messages.count-1] = newMessage
+                                self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
+                            }
+                            try await self.streamFetchChatResponses()
+                        }
+                        catch {
+                            throw ChatViewModelError.streamError(error.localizedDescription)
+                        }
+                    } else {
+                        self.updateOnMain {
+                            self.messages[self.messages.count-1] = newMessage
+                        }
                     }
                 }
             }
@@ -186,7 +213,7 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
             throw ChatViewModelError.streamError(error.localizedDescription)
         }
     }
-    
+
     private func handleChatProviderError(_ error: Error) {
         updateOnMain {
             let localizedDescription = error.localizedDescription
