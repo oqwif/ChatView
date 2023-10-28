@@ -63,7 +63,9 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     // MARK: - Public Methods
     
     public func startChat() async {
-        chatStarted = true
+        updateOnMain {
+            self.chatStarted = true
+        }
         callChatProvider()
     }
     

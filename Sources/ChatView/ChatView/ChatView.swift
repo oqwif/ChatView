@@ -25,9 +25,9 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
     public let theme: ChatTheme
     
     public let suggestionPrompts: [ChatViewSuggestionPrompt]?
-    
-    // A state variable that determines whether an error alert should be shown.
+
     @State private var showErrorAlert = false
+    @FocusState private var isInputFieldFocused: Bool
     
     /// Initializes a new chat view with the given view model and theme.
     public init(viewModel: ChatViewModel<MessageType>, 
@@ -47,6 +47,13 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
                 }
                 messageInputField
             }
+            .gesture(
+                DragGesture().onChanged { value in
+                    if value.translation.height > 0 {
+                        isInputFieldFocused = false
+                    }
+                }
+            )
             .blur(radius: viewModel.isMessageViewTapped ? 5.0 : 0)
         }
         .alert(isPresented: $showErrorAlert) {
@@ -104,6 +111,7 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
             })
             .textFieldStyle(.roundedBorder)
             .lineLimit(5)
+            .focused($isInputFieldFocused)
             
             sendButton
         }
@@ -118,10 +126,8 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
     }
     
     private func scrollToLastMessage(in proxy: ScrollViewProxy) {
-        withAnimation {
-            if let lastMessage = viewModel.messages.last {
-                proxy.scrollTo(lastMessage.id, anchor: .bottom)
-            }
+        if let lastMessage = viewModel.messages.last {
+            proxy.scrollTo(lastMessage.id, anchor: .bottom)
         }
     }
 }
