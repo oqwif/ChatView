@@ -8,6 +8,23 @@
 
 import SwiftUI
 
+class Debouncer {
+    private var workItem: DispatchWorkItem?
+    private let queue: DispatchQueue
+    private let delay: TimeInterval
+
+    init(delay: TimeInterval, queue: DispatchQueue = DispatchQueue.main) {
+        self.delay = delay
+        self.queue = queue
+    }
+
+    func debounce(action: @escaping () -> Void) {
+        workItem?.cancel()
+        workItem = DispatchWorkItem { action() }
+        queue.asyncAfter(deadline: .now() + delay, execute: workItem!)
+    }
+}
+
 /**
  `ChatView` is a SwiftUI view that provides a chat interface. It displays a list of messages and a text field for inputting new messages. The view uses generics to allow for different types of messages and message views, provided they conform to the `Message` and `MessageViewProtocol` protocols respectively.
 
@@ -20,6 +37,7 @@ import SwiftUI
 public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: View {
     // The view model for this chat view.
     @StateObject private var viewModel: ChatViewModel<MessageType>
+    private let scrollToEndDebouncer = Debouncer(delay: 0.05)
     
     // The theme for this chat view.
     public let theme: ChatTheme
@@ -126,8 +144,11 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
     }
     
     private func scrollToLastMessage(in proxy: ScrollViewProxy) {
-        if let lastMessage = viewModel.messages.last {
-            proxy.scrollTo(lastMessage.id, anchor: .bottom)
+        // Use the debouncer to delay the scroll to end action
+        scrollToEndDebouncer.debounce {
+            if let lastMessage = viewModel.messages.last {
+                proxy.scrollTo(lastMessage.id, anchor: .bottom)
+            }
         }
     }
 }
