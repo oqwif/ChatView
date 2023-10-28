@@ -3,10 +3,10 @@
     {
       "identity" : "openai",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/MacPaw/OpenAI.git",
+      "location" : "https://github.com/oqwif/OpenAI.git",
       "state" : {
-        "revision" : "c45f3320ffa760f043c0239f724850c0e4f8bde5",
-        "version" : "0.2.4"
+        "revision" : "2e33166c87f13266f43a34f64e421d859f580bb9",
+        "version" : "0.2.5"
       }
     }
   ],

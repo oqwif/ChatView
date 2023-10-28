@@ -41,12 +41,17 @@ actor Debouncer {
                 try await Task.sleep(nanoseconds: UInt64(self.delay * 1_000_000_000))
                 try await block()
             } catch {
-                // Handle error if needed
+                if error is CancellationError {
+                    // Task was cancelled, it's expected behavior for debouncer
+                    return
+                }
+                // Handle other errors if needed
                 print("Error: \(error)")
             }
         }
     }
 }
+
 
 /**
  `ChatViewModel` is a class that acts as a view model for a chat interface. It uses generics to allow for different types of messages, provided they conform to the `Message` protocol. It is an `ObservableObject`, meaning that it can be observed for changes by SwiftUI views.
@@ -76,7 +81,7 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     private let chatProvider: ChatProvider<MessageType>
     private let stream: Bool
     
-    private let debouncer: Debouncer = Debouncer(delay: 0.075)  // 75 ms delay
+    private let debouncer: Debouncer = Debouncer(delay: 0.030)  // 75 ms delay
     
     public init(chatProvider: ChatProvider<MessageType>, messages: [MessageType] = [], stream: Bool = false) {
         self.chatProvider = chatProvider
@@ -193,13 +198,12 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
                     guard let self = self else { return }
                     if newMessage.role == .function {
                         do {
-                            DispatchQueue.main.sync {
+                            self.updateOnMain {
                                 self.messages[self.messages.count-1] = newMessage
                                 self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
                             }
                             try await self.streamFetchChatResponses()
-                        }
-                        catch {
+                        } catch {
                             throw ChatViewModelError.streamError(error.localizedDescription)
                         }
                     } else {
@@ -213,6 +217,7 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
             throw ChatViewModelError.streamError(error.localizedDescription)
         }
     }
+
 
     private func handleChatProviderError(_ error: Error) {
         updateOnMain {
