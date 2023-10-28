@@ -63,7 +63,7 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     // MARK: - Public Methods
     
     public func startChat() async {
-        updateOnMain {
+        await updateOnMain {
             self.chatStarted = true
         }
         callChatProvider()
@@ -110,23 +110,23 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     // MARK: - Private Methods
     
     private func callChatProvider() {
-        updateOnMain {
-            self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
-            self.newMessage = ""
-        }
         Task {
+            await updateOnMain {
+                self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
+                self.newMessage = ""
+            }
             do {
                 if(!stream) {
                     let newMessages = try await self.fetchChatResponsesUntilNonFunction(messages: self.messages)
-                    updateOnMain {
+                    await updateOnMain {
                         self.messages = newMessages
                     }
                 } else {
-                    try await self.streamFetchChatResponses()
+                    try await self.streamFetchChatResponses(with: self.messages)
                 }
                 
             } catch {
-                updateOnMain {
+                await updateOnMain {
                     self.messages = self.messages.filter { !$0.isReceiving }
                 }
                 handleChatProviderError(error)
@@ -162,23 +162,27 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
         }
     }
     
-    private func streamFetchChatResponses() async throws {
+    private func streamFetchChatResponses(with initialMessages: [MessageType]) async throws {
+        var inMessages = initialMessages
         do {
-            for try await newMessage in chatProvider.performStreamChat(withMessages: messages.filter{!$0.isReceiving}) {
+            for try await newMessage in chatProvider.performStreamChat(withMessages: inMessages.filter{!$0.isReceiving}) {
+                var updatedMessages = inMessages
                 if newMessage.role == .function {
                     do {
-                        DispatchQueue.main.sync {
-                        self.messages[self.messages.count-1] = newMessage
-                        self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
-                    }
-                        try await streamFetchChatResponses()
+                        updatedMessages[updatedMessages.count-1] = newMessage
+                        updatedMessages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
+                        await updateOnMain {
+                            self.messages = updatedMessages
+                        }
+                        try await streamFetchChatResponses(with: updatedMessages)
                     }
                     catch {
                         throw ChatViewModelError.streamError(error.localizedDescription)
                     }
                 } else {
-                    updateOnMain {
-                        self.messages[self.messages.count-1] = newMessage
+                    updatedMessages[updatedMessages.count-1] = newMessage
+                    await updateOnMain {
+                        self.messages = updatedMessages
                     }
                 }
             }
@@ -186,16 +190,22 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
             throw ChatViewModelError.streamError(error.localizedDescription)
         }
     }
+
     
     private func handleChatProviderError(_ error: Error) {
-        updateOnMain {
+        DispatchQueue.main.async {
             let localizedDescription = error.localizedDescription
             self.errorMessage = "An error occurred: \(localizedDescription)"
         }
     }
     
-    private func updateOnMain(_ update: @escaping () -> Void) {
-        DispatchQueue.main.async(execute: update)
+    func updateOnMain(_ block: @escaping () -> Void) async {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.main.async {
+                block()
+                continuation.resume()
+            }
+        }
     }
 }
 

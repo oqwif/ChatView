@@ -128,9 +128,11 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
     
     private func scrollToLastMessage(in proxy: ScrollViewProxy) {
         // Use the debouncer to delay the scroll to end action
+        DispatchQueue.main.async {
             if let lastMessage = viewModel.messages.last {
                 proxy.scrollTo(lastMessage.id, anchor: .bottom)
             }
+        }
     }
 }
 
