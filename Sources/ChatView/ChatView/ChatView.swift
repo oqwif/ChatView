@@ -43,8 +43,10 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
         ZStack {
             VStack {
                 chatList
-                if(self.suggestionPrompts != nil && !viewModel.chatStarted) {
-                    suggestionPromptsView
+                if(self.suggestionPrompts != nil && !viewModel.chatStarted && viewModel.newMessage.isEmpty) {
+                    withAnimation {
+                        suggestionPromptsView
+                    }
                 }
                 messageInputField
             }
