@@ -107,9 +107,10 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
     
     private var messageInputField: some View {
         HStack {
-            TextField("Send a message", text: $viewModel.newMessage, onCommit: {
+            TextField("Send a message", text: $viewModel.newMessage, axis: .vertical)
+            .onSubmit {
                 viewModel.sendMessage()
-            })
+            }
             .textFieldStyle(.roundedBorder)
             .focused($isInputFieldFocused)
             .lineLimit(5)
