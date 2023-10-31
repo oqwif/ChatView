@@ -44,7 +44,7 @@ enum ChatViewModelError: LocalizedError {
  - `retry()`: Retries sending the last message that resulted in an error.
  - `resetChat(messages:)`: Resets the chat, optionally with a new set of messages.
  */
-public class ChatViewModel<MessageType: Message>: ObservableObject {
+open class ChatViewModel<MessageType: Message>: ObservableObject {
     @Published var messages: [MessageType] = []
     @Published var newMessage: String = ""
     @Published var errorMessage: String?
