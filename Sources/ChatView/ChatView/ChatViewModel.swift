@@ -85,7 +85,7 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     }
     
     public func add(message: MessageType) {
-        chatStarted = true
+        chatStarted = chatStarted ? true : message.isHidden == false && message.role == .user
         messages.append(message)
         callChatProvider()
     }
@@ -163,7 +163,7 @@ public class ChatViewModel<MessageType: Message>: ObservableObject {
     }
     
     private func streamFetchChatResponses(with initialMessages: [MessageType]) async throws {
-        var inMessages = initialMessages
+        let inMessages = initialMessages
         do {
             for try await newMessage in chatProvider.performStreamChat(withMessages: inMessages.filter{!$0.isReceiving}) {
                 var updatedMessages = inMessages
