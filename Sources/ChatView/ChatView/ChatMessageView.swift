@@ -78,7 +78,7 @@ public struct ChatMessageView: MessageViewProtocol {
     }
     
     private func normalContent(for role: MessageRole) -> some View {
-        Text(message.text)
+        Text(.init(message.text))
             .font(role == .user ? theme.userMessageFont : theme.characterMessageFont)
             .foregroundColor(role == .user ? theme.userMessageTextColor : theme.characterMessageTextColor)
     }

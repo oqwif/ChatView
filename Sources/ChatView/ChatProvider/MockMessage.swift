@@ -37,7 +37,9 @@ extension MockMessage {
             MockMessage(text: "Hi there! I'm good, thanks for asking. How about you?", role: .user),
             MockMessage(text: "I'm doing well! Have you seen the new movie that just came out?", role: .assistant),
             MockMessage(text: "Not yet, but I've heard great reviews about it.", role: .user),
-            MockMessage(text: "You should definitely check it out. It's worth it!", role: .assistant),
+            MockMessage(text: "You should definitely check it out. It's *worth it!*", role: .assistant),
+            MockMessage(text: "Check out this [Link](https://getitdoneai.com). It's worth it!", role: .assistant),
+            MockMessage(text: "How about this title:\n## Hey There!", role: .assistant),
             MockMessage(text: "", role: .assistant, isReceiving: true),
             MockMessage(text: "", role: .assistant, isError: true)
         ]
