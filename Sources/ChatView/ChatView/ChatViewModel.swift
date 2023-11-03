@@ -74,7 +74,7 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
         callChatProvider()
     }
     
-    func sendMessage() {
+    func sendMessage() async {
         guard isReceiving == false else {
             return
         }
@@ -89,11 +89,12 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
             isError: false,
             isHidden: false
         )
-        add(message: userMessage)
+        await add(message: userMessage)
         newMessage = ""
     }
     
-    public func add(message: MessageType) {
+    @MainActor
+    public func add(message: MessageType) async {
         guard isReceiving == false else {
             return
         }
@@ -103,7 +104,8 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
         callChatProvider()
     }
     
-    func retry() {
+    @MainActor
+    public func retry() async {
         guard isReceiving == false else {
             return
         }
@@ -114,6 +116,7 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
         callChatProvider()
     }
     
+    @MainActor
     public func resetChat(messages: [MessageType]? = nil) {
         guard isReceiving == false else {
             return
@@ -130,10 +133,6 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
     // MARK: - Private Methods
     
     private func callChatProvider() {
-        guard isReceiving == false else {
-            return
-        }
-
         Task {
             await updateOnMain {
                 self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
@@ -149,13 +148,17 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
                 } else {
                     try await self.streamFetchChatResponses(with: self.messages)
                 }
-                self.isReceiving = false
+                await updateOnMain {
+                    self.isReceiving = false
+                }
             } catch {
                 await updateOnMain {
                     self.messages = self.messages.filter { !$0.isReceiving }
                 }
                 handleChatProviderError(error)
-                self.isReceiving = false
+                await updateOnMain {
+                    self.isReceiving = false
+                }
             }
         }
     }
