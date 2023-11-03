@@ -63,18 +63,17 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
     
     // MARK: - Public Methods
     
-    public func startChat() async {
+    public func startChat() {
         guard isReceiving == false else {
             return
         }
         
-        await updateOnMain {
-            self.chatStarted = true
-        }
+        self.chatStarted = true
+        
         callChatProvider()
     }
     
-    func sendMessage() async {
+    func sendMessage() {
         guard isReceiving == false else {
             return
         }
@@ -89,7 +88,9 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
             isError: false,
             isHidden: false
         )
-        await add(message: userMessage)
+        Task {
+            await add(message: userMessage)
+        }
         newMessage = ""
     }
     
@@ -104,11 +105,17 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
         callChatProvider()
     }
     
-    @MainActor
-    public func retry() async {
+    public func retry() {
         guard isReceiving == false else {
             return
         }
+        Task {
+            await retryCall()
+        }
+    }
+    
+    @MainActor
+    private func retryCall() async {
         guard let lastMessage = messages.last(where: { $0.isError }) else { return }
         if let index = messages.firstIndex(of: lastMessage) {
             messages.remove(at: index)
