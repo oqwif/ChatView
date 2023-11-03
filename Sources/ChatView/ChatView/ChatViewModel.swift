@@ -63,6 +63,7 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
     
     // MARK: - Public Methods
     
+    @MainActor
     public func startChat() async {
         guard isReceiving == false else {
             return
@@ -74,6 +75,7 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
         callChatProvider()
     }
     
+    @MainActor
     func sendMessage() {
         guard isReceiving == false else {
             return
@@ -93,6 +95,7 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
         newMessage = ""
     }
     
+    @MainActor
     public func add(message: MessageType) {
         guard isReceiving == false else {
             return
@@ -103,7 +106,8 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
         callChatProvider()
     }
     
-    func retry() {
+    @MainActor
+    public func retry() {
         guard isReceiving == false else {
             return
         }
@@ -114,6 +118,7 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
         callChatProvider()
     }
     
+    @MainActor
     public func resetChat(messages: [MessageType]? = nil) {
         guard isReceiving == false else {
             return
@@ -130,10 +135,6 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
     // MARK: - Private Methods
     
     private func callChatProvider() {
-        guard isReceiving == false else {
-            return
-        }
-
         Task {
             await updateOnMain {
                 self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
