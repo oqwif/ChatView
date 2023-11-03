@@ -88,18 +88,22 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
             isError: false,
             isHidden: false
         )
-        Task {
-            await add(message: userMessage)
-        }
+    
+        add(message: userMessage)
         newMessage = ""
     }
     
-    @MainActor
-    public func add(message: MessageType) async {
+    public func add(message: MessageType) {
         guard isReceiving == false else {
             return
         }
-
+        Task {
+            await addCall(message)
+        }
+    }
+    
+    @MainActor
+    private func addCall(_ message: MessageType) async {
         chatStarted = chatStarted ? true : message.isHidden == false && message.role == .user
         messages.append(message)
         callChatProvider()
