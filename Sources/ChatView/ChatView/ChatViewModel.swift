@@ -50,6 +50,7 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
     @Published var errorMessage: String?
     @Published var isMessageViewTapped: Bool = false
     @Published var chatStarted: Bool = false
+    @Published var isReceiving: Bool = false
     
     private let chatProvider: ChatProvider<MessageType>
     private let stream: Bool
@@ -63,6 +64,10 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
     // MARK: - Public Methods
     
     public func startChat() async {
+        guard isReceiving == false else {
+            return
+        }
+        
         await updateOnMain {
             self.chatStarted = true
         }
@@ -70,6 +75,10 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
     }
     
     func sendMessage() {
+        guard isReceiving == false else {
+            return
+        }
+
         guard !newMessage.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
         
         let userMessage = MessageType(
@@ -85,12 +94,19 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
     }
     
     public func add(message: MessageType) {
+        guard isReceiving == false else {
+            return
+        }
+
         chatStarted = chatStarted ? true : message.isHidden == false && message.role == .user
         messages.append(message)
         callChatProvider()
     }
     
     func retry() {
+        guard isReceiving == false else {
+            return
+        }
         guard let lastMessage = messages.last(where: { $0.isError }) else { return }
         if let index = messages.firstIndex(of: lastMessage) {
             messages.remove(at: index)
@@ -99,6 +115,10 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
     }
     
     public func resetChat(messages: [MessageType]? = nil) {
+        guard isReceiving == false else {
+            return
+        }
+
         chatStarted = false
         if let messages = messages {
             self.messages = messages
@@ -110,10 +130,15 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
     // MARK: - Private Methods
     
     private func callChatProvider() {
+        guard isReceiving == false else {
+            return
+        }
+
         Task {
             await updateOnMain {
                 self.messages.append(MessageType(id: UUID(), text: "", role: .assistant, isReceiving: true, isError: false, isHidden: false))
                 self.newMessage = ""
+                self.isReceiving = true
             }
             do {
                 if(!stream) {
@@ -124,12 +149,13 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
                 } else {
                     try await self.streamFetchChatResponses(with: self.messages)
                 }
-                
+                self.isReceiving = false
             } catch {
                 await updateOnMain {
                     self.messages = self.messages.filter { !$0.isReceiving }
                 }
                 handleChatProviderError(error)
+                self.isReceiving = false
             }
         }
     }
