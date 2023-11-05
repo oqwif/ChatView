@@ -42,7 +42,7 @@ public struct ChatTheme {
 
     public init(
         userMessageBackgroundColor: Color = Color.gray.opacity(0.2),
-        characterMessageBackgroundColor: Color = Color.gray.opacity(0.2),
+        characterMessageBackgroundColor: Color = Color.gray.opacity(0.1),
         userMessageFont: Font = .callout,
         characterMessageFont: Font = .callout,
         userMessageTextColor: Color = Color.primary,
