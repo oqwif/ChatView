@@ -154,7 +154,7 @@ extension Encodable {
  The `FunctionCallError` enum is used to define errors that can occur when calling a function.
  */
 open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
-    let openAI: OpenAI
+    private(set) var openAI: OpenAI
     let temperature: OpenAIChatTemperature
     let model: String       // e.g. "gpt-3.5-turbo"
     let maxTokens: Int?
@@ -178,6 +178,16 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
         self.userID = userID
         self.functions = functions
         self.systemMessageProvider = systemMessageProvider
+    }
+    
+    public func update(token: String) {
+        let configuration = OpenAI.Configuration(
+            token: token,
+            organizationIdentifier: self.openAI.configuration.organizationIdentifier, 
+            host: self.openAI.configuration.host,
+            timeoutInterval: self.openAI.configuration.timeoutInterval
+            )
+        self.openAI = OpenAI(configuration: configuration)
     }
     
     open override func performChat(withMessages messages: [OpenAIMessage]) async throws -> OpenAIMessage {
