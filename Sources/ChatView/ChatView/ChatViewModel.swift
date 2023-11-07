@@ -52,7 +52,7 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
     @Published var chatStarted: Bool = false
     @Published var isReceiving: Bool = false
     
-    private let chatProvider: ChatProvider<MessageType>
+    public let chatProvider: ChatProvider<MessageType>
     private let stream: Bool
     
     public init(chatProvider: ChatProvider<MessageType>, messages: [MessageType] = [], stream: Bool = false) {
