@@ -45,7 +45,7 @@ enum ChatViewModelError: LocalizedError {
  - `resetChat(messages:)`: Resets the chat, optionally with a new set of messages.
  */
 open class ChatViewModel<MessageType: Message>: ObservableObject {
-    @Published var messages: [MessageType] = []
+    @Published public var messages: [MessageType] = []
     @Published var newMessage: String = ""
     @Published var errorMessage: String?
     @Published var isMessageViewTapped: Bool = false
