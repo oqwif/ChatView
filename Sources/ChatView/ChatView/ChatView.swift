@@ -116,6 +116,12 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
             .textFieldStyle(.roundedBorder)
             .focused($isInputFieldFocused)
             .lineLimit(5)
+            .onChange(of: viewModel.shouldFocusTextField) { shouldFocus in
+                if shouldFocus {
+                    isInputFieldFocused = true
+                    viewModel.clearFocusRequest() // Reset the request
+                }
+            }
             
             sendButton
         }

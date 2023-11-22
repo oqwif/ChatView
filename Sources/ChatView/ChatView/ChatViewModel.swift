@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum ChatViewModelError: LocalizedError {
     case notConnected
@@ -46,7 +47,9 @@ enum ChatViewModelError: LocalizedError {
  */
 open class ChatViewModel<MessageType: Message>: ObservableObject {
     @Published public var messages: [MessageType] = []
-    @Published var newMessage: String = ""
+    @Published public var newMessage: String = ""
+    @Published public var shouldFocusTextField: Bool = false
+
     @Published var errorMessage: String?
     @Published var isMessageViewTapped: Bool = false
     @Published var chatStarted: Bool = false
@@ -102,6 +105,16 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
         }
     }
     
+    // Method to request focus
+    public func requestFocusOnTextField() {
+        shouldFocusTextField = true
+    }
+
+    // Method to clear focus request
+    public func clearFocusRequest() {
+        shouldFocusTextField = false
+    }
+
     @MainActor
     private func addCall(_ message: MessageType) async {
         chatStarted = chatStarted ? true : message.isHidden == false && message.role == .user
