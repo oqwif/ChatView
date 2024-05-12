@@ -8,7 +8,7 @@
 import Foundation
 import OpenAI
 
-public extension Chat {
+public extension ChatQuery.ChatCompletionMessageParam {
     var messageRole: MessageRole {
         get {
             switch role {
@@ -18,7 +18,7 @@ public extension Chat {
                 return .system
             case .user:
                 return .user
-            case .function:
+            case .tool:
                 return .function
             }
         }
@@ -26,16 +26,16 @@ public extension Chat {
 }
 
 public extension MessageRole {
-    var chatRole: Chat.Role {
+    var chatRole: ChatQuery.ChatCompletionMessageParam.Role {
         switch self {
         case .assistant:
-            return Chat.Role.assistant
+            return ChatQuery.ChatCompletionMessageParam.Role.assistant
         case .system:
-            return Chat.Role.system
+            return ChatQuery.ChatCompletionMessageParam.Role.system
         case .user:
-            return Chat.Role.user
+            return ChatQuery.ChatCompletionMessageParam.Role.user
         case .function:
-            return Chat.Role.function
+            return ChatQuery.ChatCompletionMessageParam.Role.tool
         }
     }
 }
@@ -47,7 +47,7 @@ public struct OpenAIMessage: Message {
     public let isReceiving: Bool
     public let isError: Bool
     public let isHidden: Bool
-    public let chat: Chat
+    public let chat: ChatQuery.ChatCompletionMessageParam
     
     public init(
         id: UUID = UUID(),
@@ -63,12 +63,12 @@ public struct OpenAIMessage: Message {
         self.isReceiving = isReceiving
         self.isError = isError
         self.isHidden = isHidden
-        self.chat = Chat(role: role.chatRole, content: text)
+        self.chat = ChatQuery.ChatCompletionMessageParam(role: role.chatRole, content: text)!
     }
     
-    public init(chat: Chat) {
+    public init(chat: ChatQuery.ChatCompletionMessageParam) {
         self.id = UUID()
-        self.text = chat.content ?? ""
+        self.text = chat.content!.string ?? ""
         self.role = chat.messageRole
         self.isReceiving = false
         self.isError = false

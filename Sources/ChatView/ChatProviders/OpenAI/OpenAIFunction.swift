@@ -9,6 +9,6 @@ import Foundation
 import OpenAI
 
 public protocol OpenAIFunction {
-    var chatFunctionDeclaration: ChatFunctionDeclaration { get }
+    var chatFunctionDeclaration: ChatQuery.ChatCompletionToolParam { get }
     func call(parameters: [String:Any]) async throws -> Encodable
 }

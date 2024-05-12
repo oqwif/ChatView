@@ -195,12 +195,12 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
         let chats = messages.map { $0.chat }
         
         let query = ChatQuery(
+            messages: chats,            
             model: model,
-            messages: chats,
-            functions: functions?.map { $0.chatFunctionDeclaration },
-            functionCall: nil,
-            temperature: temperature.temperature,
             maxTokens: maxTokens,
+            temperature: temperature.temperature,
+            toolChoice: .auto,
+            tools: functions?.map { $0.chatFunctionDeclaration },
             user: userID
         )
         
@@ -219,16 +219,11 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
             case "content_filter":
                 throw OpenAIChatProviderError.contentFilterException
             case "function_call":
-                guard let functionCall = firstChoice.message.functionCall else {
+                guard let functionCall = firstChoice.message.toolCalls?.first else {
                     throw OpenAIChatProviderError.noFunctionNameSpecified
                 }
-                guard let functionName = functionCall.name else {
-                    throw OpenAIChatProviderError.noFunctionNameSpecified
-                }
-
-                guard let functionArguments = functionCall.arguments else {
-                    throw OpenAIChatProviderError.noArgumentsSpecified
-                }
+                let functionName = functionCall.function.name
+                let functionArguments = functionCall.function.arguments
                 
                 return try await handleFunctionCall(functionName, arguments: functionArguments)
             default:
@@ -245,12 +240,12 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
         let chats = messages.map { $0.chat }
         
         let query = ChatQuery(
-            model: model,
             messages: chats,
-            functions: functions?.map { $0.chatFunctionDeclaration },
-            functionCall: nil,
-            temperature: temperature.temperature,
+            model: model,
             maxTokens: maxTokens,
+            temperature: temperature.temperature,
+            toolChoice: .auto,
+            tools: functions?.map { $0.chatFunctionDeclaration },
             user: userID
         )
         return AsyncThrowingStream { continuation in
@@ -269,11 +264,11 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                         if let firstChoice = result.choices.first {
                             if let finishReason = firstChoice.finishReason {
                                 switch finishReason {
-                                case "length":
+                                case .length:
                                     throw OpenAIChatProviderError.maxTokensExceeded
-                                case "content_filter":
+                                case .contentFilter:
                                     throw OpenAIChatProviderError.contentFilterException
-                                case "function_call":
+                                case .functionCall:
                                     guard let functionName = functionName else {
                                         throw OpenAIChatProviderError.noFunctionNameSpecified
                                     }
@@ -292,7 +287,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                             } else {
                                 let delta = firstChoice.delta
                                 
-                                if let functionCall = firstChoice.delta.functionCall {
+                                if let functionCall = firstChoice.delta.toolCalls?.first?.function {
                                     if let name = functionCall.name {
                                         functionName = name
                                     }
@@ -356,13 +351,13 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
         } catch {
             result = ["status": "failed", "error": error.localizedDescription].jsonString!
         }
-        let chat = Chat(role: .function, content: result, name: functionName)
+        let chat = ChatQuery.ChatCompletionMessageParam(role: .tool, content: result, name: functionName)!
         return OpenAIMessage(chat: chat)
     }
     
     private func getFunction(from functions: [OpenAIFunction], for name: String) throws -> OpenAIFunction {
         let functionMap = functions.reduce(into: [String: OpenAIFunction]()) { (result, function) in
-            result[function.chatFunctionDeclaration.name] = function
+            result[function.chatFunctionDeclaration.function.name] = function
         }
         
         guard let function = functionMap[name] else {
@@ -374,7 +369,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
     private func execute(_ function: OpenAIFunction, with arguments: String) async throws -> Encodable {
         let jsonObject = arguments.toJsonObject() ?? [:]
         
-        if let requiredParams = function.chatFunctionDeclaration.parameters.required,
+        if let requiredParams = function.chatFunctionDeclaration.function.parameters?.required,
            requiredParams.count > 0 && requiredParams.filter({ jsonObject.param($0) == nil }).count > 0 {
             throw FunctionCallError.requiredParametersNotSupplied
         }
