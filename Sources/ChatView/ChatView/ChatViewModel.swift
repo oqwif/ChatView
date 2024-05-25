@@ -203,7 +203,7 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
         This function recursively sends messages and processes responses from the chat provider. If a response with a role of `.function` is received, the function will call itself again with the accumulated messages.
     */
     private func fetchChatResponsesUntilNonFunction(messages: [MessageType] = []) async throws -> [MessageType] {
-        var filteredMessages = messages.filter{!$0.isReceiving}
+        let filteredMessages = messages.filter{!$0.isReceiving}
         let newMessages = try await chatProvider.performChat(withMessages: filteredMessages)
         let combinedMessages = filteredMessages + newMessages
 
