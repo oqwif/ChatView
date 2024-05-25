@@ -13,7 +13,7 @@ import Foundation
  The class provides a single open method `performChat(withMessages:)` that should be overridden by subclasses. This method takes an array of messages as input and returns a single message asynchronously. The method throws an error if it is not overridden.
  */
 open class ChatProvider<MessageType: Message> {
-    open func performChat(withMessages messages: [MessageType]) async throws -> MessageType {
+    open func performChat(withMessages messages: [MessageType]) async throws -> [MessageType] {
         fatalError("This method should be overridden")
     }
     open func performStreamChat(withMessages messages: [MessageType]) -> AsyncThrowingStream<MessageType, Error> {

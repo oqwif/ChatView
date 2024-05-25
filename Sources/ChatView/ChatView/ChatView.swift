@@ -150,8 +150,8 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
 /// A mock provider for chat messages. This class is used for testing purposes.
 class MockChatProvider: ChatProvider<MockMessage> {
     /// Performs a chat with the given messages and returns a mock response.
-    override func performChat(withMessages messages: [MockMessage]) async throws -> MockMessage {
-        return MockMessage(text: "Assistant response", role: MessageRole.assistant)
+    override func performChat(withMessages messages: [MockMessage]) async throws -> [MockMessage] {
+        return [MockMessage(text: "Assistant response", role: MessageRole.assistant)]
     }
 }
 

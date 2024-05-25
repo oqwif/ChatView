@@ -190,7 +190,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
         self.openAI = OpenAI(configuration: configuration)
     }
     
-    open override func performChat(withMessages messages: [OpenAIMessage]) async throws -> OpenAIMessage {
+    open override func performChat(withMessages messages: [OpenAIMessage]) async throws -> [OpenAIMessage] {
         let messages = updateSystemMessage(withMessages: messages)
         let chats = messages.map { $0.chat }
         
@@ -225,9 +225,22 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                 let functionName = functionCall.function.name
                 let functionArguments = functionCall.function.arguments
                 
-                return try await handleFunctionCall(functionName, arguments: functionArguments)
+                return [try await handleFunctionCall(functionName, arguments: functionArguments)]
+            case "tool_calls":
+                guard let toolCalls = firstChoice.message.toolCalls else {
+                    throw OpenAIChatProviderError.other("No tool calls in response")
+                }
+                var newMessages: [OpenAIMessage] = []
+                for toolCall in toolCalls {
+                    let functionName = toolCall.function.name
+                    let functionArguments = toolCall.function.arguments
+                    
+                    let response = try await handleToolCall(functionName, arguments: functionArguments)
+                    newMessages.append(.init(chat:.tool(.init(content:response, toolCallId: toolCall.id))))
+                }
+                return newMessages
             default:
-                return OpenAIMessage(chat: firstChoice.message)
+                return [OpenAIMessage(chat: firstChoice.message)]
             }
         } catch {
             // Propagate the error to the caller
@@ -354,6 +367,22 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
         let chat = ChatQuery.ChatCompletionMessageParam(role: .tool, content: result, name: functionName)!
         return OpenAIMessage(chat: chat)
     }
+    
+    private func handleToolCall(_ functionName: String, arguments: String) async throws -> String {
+        guard let functions = self.functions else {
+            throw OpenAIChatProviderError.noFunctionMatch(functionName)
+        }
+        
+        let function = try getFunction(from: functions, for: functionName)
+        
+        do {
+            let functionResult = try await execute(function, with: arguments)
+            return functionResult.jsonString ?? ["status": "success"].jsonString!
+        } catch {
+            return ["status": "failed", "error": error.localizedDescription].jsonString!
+        }
+    }
+    
     
     private func getFunction(from functions: [OpenAIFunction], for name: String) throws -> OpenAIFunction {
         let functionMap = functions.reduce(into: [String: OpenAIFunction]()) { (result, function) in

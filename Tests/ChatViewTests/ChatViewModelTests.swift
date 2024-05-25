@@ -11,13 +11,13 @@ import XCTest
 class MockChatProvider: ChatProvider<MockMessage> {
     var shouldReturnError = false
     
-    override func performChat(withMessages messages: [MockMessage]) async throws -> MockMessage {
+    override func performChat(withMessages messages: [MockMessage]) async throws -> [MockMessage] {
         if shouldReturnError {
             throw NSError(domain: "MockChatProvider", code: 1, userInfo: [NSLocalizedDescriptionKey: "Test Error"])
         }
         
         // Return a mock message
-        return MockMessage(text: "Mock Message", role: .assistant)
+        return [MockMessage(text: "Mock Message", role: .assistant)]
     }
 }
 

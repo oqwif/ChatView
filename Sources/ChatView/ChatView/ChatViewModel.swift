@@ -204,10 +204,10 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
     */
     private func fetchChatResponsesUntilNonFunction(messages: [MessageType] = []) async throws -> [MessageType] {
         var newMessages = messages.filter{!$0.isReceiving}
-        let message = try await chatProvider.performChat(withMessages: newMessages)
+        let messages = try await chatProvider.performChat(withMessages: newMessages)
+        newMessages = newMessages + messages
 
-        newMessages.append(message)
-        if message.role == .function {
+        if messages.first!.role == .function {
             // If it is a function result, call GPT again so that it can see the result
             return try await fetchChatResponsesUntilNonFunction(messages: newMessages)
         } else {
