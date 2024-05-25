@@ -245,7 +245,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                 guard let toolCalls = firstChoice.message.toolCalls else {
                     throw OpenAIChatProviderError.other("No tool calls in response")
                 }
-                var newMessages: [OpenAIMessage] = []
+                var newMessages: [OpenAIMessage] = [OpenAIMessage(chat: firstChoice.message)]
                 for toolCall in toolCalls {
                     let functionName = toolCall.function.name
                     let functionArguments = toolCall.function.arguments
