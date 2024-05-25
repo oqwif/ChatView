@@ -68,7 +68,7 @@ public struct OpenAIMessage: Message {
     
     public init(chat: ChatQuery.ChatCompletionMessageParam) {
         self.id = UUID()
-        self.text = chat.content!.string ?? ""
+        self.text = chat.content?.string ?? ""
         self.role = chat.messageRole
         self.isReceiving = false
         self.isError = false
