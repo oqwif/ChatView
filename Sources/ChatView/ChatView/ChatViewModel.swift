@@ -203,15 +203,15 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
         This function recursively sends messages and processes responses from the chat provider. If a response with a role of `.function` is received, the function will call itself again with the accumulated messages.
     */
     private func fetchChatResponsesUntilNonFunction(messages: [MessageType] = []) async throws -> [MessageType] {
-        var newMessages = messages.filter{!$0.isReceiving}
-        let messages = try await chatProvider.performChat(withMessages: newMessages)
-        newMessages = newMessages + messages
+        var filteredMessages = messages.filter{!$0.isReceiving}
+        let newMessages = try await chatProvider.performChat(withMessages: filteredMessages)
+        let combinedMessages = filteredMessages + newMessages
 
-        if messages.first!.role == .function {
+        if newMessages.first!.role == .function {
             // If it is a function result, call GPT again so that it can see the result
-            return try await fetchChatResponsesUntilNonFunction(messages: newMessages)
+            return try await fetchChatResponsesUntilNonFunction(messages: combinedMessages)
         } else {
-            return newMessages
+            return combinedMessages
         }
     }
     
