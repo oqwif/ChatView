@@ -74,7 +74,7 @@ public struct ChatView<MessageType: Message, MessageView: MessageViewProtocol>: 
     private var chatList: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                ForEach(viewModel.messages.filter { $0.role != .system && $0.isHidden == false && !$0.text.isEmpty}) { message in
+                ForEach(viewModel.messages.filter { $0.role != .system && $0.isHidden == false}) { message in
                     MessageView(message: message, theme: theme, retryAction: viewModel.retry)
                         .id(message.id)
                 }

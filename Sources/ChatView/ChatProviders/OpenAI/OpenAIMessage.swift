@@ -72,7 +72,7 @@ public struct OpenAIMessage: Message {
         self.role = chat.messageRole
         self.isReceiving = false
         self.isError = false
-        self.isHidden = chat.messageRole == .function
+        self.isHidden = chat.messageRole == .function || chat.toolCalls != nil
         self.chat = chat
     }
     
