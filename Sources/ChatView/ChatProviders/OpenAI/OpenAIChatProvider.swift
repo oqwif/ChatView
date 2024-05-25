@@ -25,19 +25,20 @@ import OpenAI
  The enum provides a `errorDescription` computed property that returns a localized description of the error.
  */
 public enum OpenAIChatProviderError: LocalizedError {
-    case invalidResponse
+    case invalidResponse(String)
     case maxTokensExceeded
     case contentFilterException
     case noResponseMessageContent
     case noFunctionNameSpecified
     case noArgumentsSpecified
     case noFunctionMatch(String)
+    case invalidInput(String)
     case other(String)  // Generic error type for other unforeseen errors
     
     public var errorDescription: String? {
         switch self {
-        case .invalidResponse:
-            return "Invalid response from API."
+        case .invalidResponse(let message):
+            return "Invalid response \(message)."
         case .maxTokensExceeded:
             return "The maximum number of tokens specified in the request was reached."
         case .contentFilterException:
@@ -50,6 +51,8 @@ public enum OpenAIChatProviderError: LocalizedError {
             return "The API tried to call a function but no arguments were specified"
         case .noFunctionMatch(let name):
             return "The API tried to call an unmatched function called \(name)."
+        case .invalidInput(let message):
+            return "Invalid input \(message)."
         case .other(let message):
             return message
         }
@@ -191,11 +194,23 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
     }
     
     open override func performChat(withMessages messages: [OpenAIMessage]) async throws -> [OpenAIMessage] {
-        let messages = updateSystemMessage(withMessages: messages)
-        let chats = messages.map { $0.chat }
+        // Check for message input
+        guard !messages.isEmpty else {
+            throw OpenAIChatProviderError.invalidInput("No messages provided")
+        }
         
+        // Update system message
+        let updatedMessages = updateSystemMessage(withMessages: messages)
+        let chats = updatedMessages.map { $0.chat }
+        
+        // Check for empty chats
+        guard !chats.isEmpty else {
+            throw OpenAIChatProviderError.invalidInput("No chats generated from messages")
+        }
+        
+        // Construct the query
         let query = ChatQuery(
-            messages: chats,            
+            messages: chats,
             model: model,
             maxTokens: maxTokens,
             temperature: temperature.temperature,
@@ -208,9 +223,9 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
             // Perform the actual OpenAI chat
             let result = try await openAI.chats(query: query)
             
-            // Get the first choice from the response
+            // Check for choices in result
             guard let firstChoice = result.choices.first else {
-                throw OpenAIChatProviderError.invalidResponse
+                throw OpenAIChatProviderError.invalidResponse("No choices in result")
             }
             
             switch firstChoice.finishReason {
@@ -243,10 +258,13 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
                 return [OpenAIMessage(chat: firstChoice.message)]
             }
         } catch {
+            // Log error
+            print("Error in performChat: \(error)")
             // Propagate the error to the caller
             throw error
         }
     }
+
     
     open override func performStreamChat(withMessages messages: [OpenAIMessage]) -> AsyncThrowingStream<OpenAIMessage, Error> {
         let messages = updateSystemMessage(withMessages: messages)
