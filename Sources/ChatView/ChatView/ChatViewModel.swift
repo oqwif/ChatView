@@ -207,7 +207,7 @@ open class ChatViewModel<MessageType: Message>: ObservableObject {
         let newMessages = try await chatProvider.performChat(withMessages: filteredMessages)
         let combinedMessages = filteredMessages + newMessages
 
-        if newMessages.first!.role == .function {
+        if newMessages.last!.role == .function {
             // If it is a function result, call GPT again so that it can see the result
             return try await fetchChatResponsesUntilNonFunction(messages: combinedMessages)
         } else {
