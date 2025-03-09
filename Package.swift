@@ -16,7 +16,7 @@ let package = Package(
             targets: ["ChatView"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/MacPaw/OpenAI.git", from: "0.2.8")
+        .package(url: "https://github.com/MacPaw/OpenAI.git", from: "0.3.6")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.

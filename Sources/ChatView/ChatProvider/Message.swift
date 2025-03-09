@@ -12,6 +12,7 @@ public enum MessageRole {
     case assistant
     case user
     case function
+    case developer
 }
 
 /**

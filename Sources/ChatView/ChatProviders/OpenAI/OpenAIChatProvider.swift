@@ -59,6 +59,24 @@ public enum OpenAIChatProviderError: LocalizedError {
     }
 }
 
+public enum OpenAIReasoningEffort: String, Codable, Equatable {
+    case low
+    case medium
+    case high
+}
+
+extension OpenAIReasoningEffort {
+    var reasoningEffort: ChatQuery.ReasoningEffort {
+        switch self {
+        case .low:
+            return .low
+        case .medium:
+            return .medium
+        case .high:
+            return .high
+        }
+    }
+}
 /**
  `FunctionCallError` is an enum that represents errors that can occur when calling a function in the `OpenAIChatProvider`. It conforms to the `LocalizedError` protocol to provide localized error descriptions.
 
@@ -160,6 +178,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
     private(set) var openAI: OpenAI
     let temperature: OpenAIChatTemperature
     let model: String       // e.g. "gpt-3.5-turbo"
+    let reasoningEffort: OpenAIReasoningEffort?
     let maxTokens: Int?
     let userID: String?
     let functions: [OpenAIFunction]?
@@ -169,6 +188,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
         openAI: OpenAI,
         temperature: OpenAIChatTemperature = .chatbotResponses,
         model: String = "gpt-3.5-turbo",
+        reasoningEffort: OpenAIReasoningEffort? = nil,
         maxTokens: Int? = nil,
         userID: String? = nil,
         functions: [OpenAIFunction]? = nil,
@@ -177,6 +197,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
         self.openAI = openAI
         self.temperature = temperature
         self.model = model
+        self.reasoningEffort = reasoningEffort
         self.maxTokens = maxTokens
         self.userID = userID
         self.functions = functions
@@ -212,6 +233,7 @@ open class OpenAIChatProvider: ChatProvider<OpenAIMessage> {
         let query = ChatQuery(
             messages: chats,
             model: model,
+            reasoningEffort: reasoningEffort?.reasoningEffort,
             maxTokens: maxTokens,
             temperature: temperature.temperature,
             toolChoice: .auto,

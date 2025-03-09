@@ -20,6 +20,8 @@ public extension ChatQuery.ChatCompletionMessageParam {
                 return .user
             case .tool:
                 return .function
+            case .developer:
+                return .developer
             }
         }
     }
@@ -36,6 +38,8 @@ public extension MessageRole {
             return ChatQuery.ChatCompletionMessageParam.Role.user
         case .function:
             return ChatQuery.ChatCompletionMessageParam.Role.tool
+        case .developer:
+            return ChatQuery.ChatCompletionMessageParam.Role.developer
         }
     }
 }
